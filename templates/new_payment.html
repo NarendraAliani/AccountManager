@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{%block head%}
+<style>
+.selectize-input.focus{border-color:red;box-shadow: inset 0 1px 1px rgba(255,0,0,0.75), 0 0 8px rgba(255,0,0, 0.6);}
+</style>
+{% endblock%}
+
+{% block title %}
+<div class="navbar-header"> <h2>&nbsp;New payment</h2></div>
+{% endblock %}
+
+
+{% block body %}
+<form method="POST"> {% csrf_token %}
+<div class="row">
+<div class="col-md-10">
+<div class="card">
+<div class="content">
+	<div class="row">
+		<div class="col-md-12 form-group">
+			<label>Client</label>
+			{{form.client}}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-11 col-md-offset-1 border-input" id="client_details">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 form-group">
+			<label>Amount</label>
+			{{form.paid_amount}}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 form-group">
+			<label>Payment Method</label>
+			{{form.method_of_payment}}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 form-group">
+			<label>Description</label>
+			{{form.description}}
+		</div>
+	</div>
+	<div class="text-center">
+		<button type="submit" class="btn btn-info btn-fill btn-wd">Save</button>
+	</div>	
+</div>
+</div>
+</div>
+</div>
+
+</form>
+{% endblock %}
+
+
+{% block script %}
+<script>
+	$("#sidebar .payments")[0].className += " active";
+	{%if add%}
+	client_options = $('#id_client').selectize({
+		create:false, closeAfterSelect:true, placeholder : "Select A Client", selectOnTab : true , 
+		onItemAdd : function(x) {
+			$.ajax({ 
+				url:'/api/client/' + x,
+				type:'get',
+				success : function(data) {
+					dt = $('#client_details')[0];
+					dt.innerHTML = '<small>' + data.name + ', ' + data.address + '<br><h6>Debit : ' + data.debit + '</h6></small>';
+				},
+				failure : function(data) {alert("Nope");},
+			})
+		},
+	});
+	client_options[0].selectize.clear();
+	$('#id_paid_amount').val('');
+	{% endif %}
+</script>
+{% endblock %}

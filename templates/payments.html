@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block head%}
+<link href="/static/css/datatables.min.css" rel="stylesheet"/>
+{% endblock%}
+
+{% block title %}
+<div class="navbar-header"> <h2>&nbsp;Payments </h2></div>
+<div class="nav navbar-nav navbar-right col-md-3">
+	<a href="/payments/new"><button type="submit" class="btn btn-info btn-fill btn-wd">New payment</button></a>
+</div>
+{% endblock %}
+
+{% block body%}
+<div class="row">
+<div class="col-md-12">
+<div class="card card-plain">
+<div class="content table-responsive table-full-width">
+<table class="table table-hover card" id="datatable">
+    <thead>
+        <th width="5%">Clear</th>
+        <th width="15">Payment Date</th>
+        <th width="40">Client Name</th>
+    	<th width="15">Paid Amount</th>
+    	<th width="20">Payment Method</th>
+        <th width="5%">&nbsp;</th>    
+        <th width="0%"></th>
+        <th width="0%">GSTIN</th>
+        <th width="0%">Payment Details</th>
+        <th width="0%"></th>
+    </thead>
+    <tbody>
+    {% for payment in payments%}
+        <tr class="{%if payment.is_cleared%}text-info{%endif%}">
+            <td>{%if payment.is_cleared%}clear{%else%}pending{%endif%}</td>
+        	<td>{{payment.payment_date}}</td>
+            <td><a href="/clients/{{payment.client.id}}">{{payment.client.name|title}}</a></td>
+        	<td>{{payment.paid_amount}}</td>
+        	<td>{{payment.method_of_payment}}</td>
+            <td><a href="/payments/{{payment.id}}"><i class="fa fa-chevron-circle-right fa-2x"></i></a></td>
+            <td>{%if payment.is_cleared%}clear{%endif%}</td>
+            <td>{{payment.client.gstin}}</td>
+            <td>{{payment.payment_description}}</td>
+            <td>{{payment.id}}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tfoot>
+</table>
+</div>
+</div>
+</div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="/static/js/jquery.datatables.js" type="text/javascript"></script>
+<script>
+var intVal = function ( i ) {
+    if (typeof i === 'string')  { num = parseFloat(i); }
+    else if (typeof i === 'number') { num = parseFloat(i) ; }
+    
+    if (num>0) return Math.round(num * 100) / 100;
+    else return 0.0;
+};
+
+$(document).ready(function(){
+    $("#sidebar .payments")[0].className += " active";
+    $('#datatable').DataTable({
+        paging: false,
+        dom: 'frtiBp',
+        buttons: [{
+            extend: 'csv',
+            text: 'Export to Excel',
+            exportOptions: {
+                columns : [1,2,7,3,4,8]
+            },
+        }],
+
+        scrollY: '60vh',
+        "scrollCollapse": true,
+        "order": [[ 9, 'dsc' ]],
+        
+        "footerCallback" : function(row, data, start, end, display)
+        {
+            var api = this.api(), data;
+            total = api.column(3 , { page: 'current'} ).data().reduce( function(a,b) { return a+intVal(b) } , 0);
+            $(api.column(3).footer()).html('<b>' + total + '</b>');
+
+            $(api.column(1).footer()).html('<b>' + api.rows( { page: 'current'} ).count() + ' items</b>');
+        },
+        
+        "columnDefs": [ 
+            { "targets": [5], "orderable" : false},
+            { "targets": [0,6,7,8,9], "visible" : false},
+        ],
+    });
+});
+</script>
+{% endblock %}

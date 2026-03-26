@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block head%}
+<link href="/static/css/datatables.min.css" rel="stylesheet"/>
+{% endblock%}
+
+
+{% block title %}
+<div class="navbar-header"> <h2>&nbsp;Agents </h2></div>
+<div class="nav navbar-nav navbar-right col-md-3">
+	<a href="/agents/new"><button type="submit" class="btn btn-info btn-fill btn-wd">New Agent</button></a>
+</div>
+{% endblock %}
+
+{% block body%}
+<div class="row">
+<div class="col-md-12">
+<div class="card card-plain">
+<div class="content table-responsive table-full-width">
+<table class="table table-hover card" id="datatable">
+    <thead>
+        <th width="60%">Agent Name</th>
+    	<th width="20%">Agent Mobile</th>
+        <th width="10%">Bills</th>
+        <th width="10%">&nbsp;</th>
+        <th width="0%"></th>
+    </thead>
+    <tbody>
+    {% for agent in agents%}
+        <tr>
+        	<td>{{agent.name|title}}</td>
+        	<td>{{agent.mobile}}</td>
+            <td>{{agent.bill_set.count}}</td>
+            <td><a href="/agents/{{agent.id}}"><i class="fa fa-chevron-circle-right fa-2x"></i></a></td>
+            <td>{{agent.id}}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="/static/js/jquery.datatables.js" type="text/javascript"></script>
+<script>
+$(document).ready(function(){
+    $("#sidebar .agents")[0].className += " active";
+    data_table = $('#datatable').DataTable({
+        paging: false,
+        dom: 'frtiBp',
+        buttons: [{
+            extend: 'csv',
+            text: 'Export to Excel',
+            exportOptions : {
+                columns : [0,1,2]
+            },
+        }],
+        
+
+        scrollY: '60vh',
+        "scrollCollapse": true,
+        "order" : [[4,'dsc']],
+        "columnDefs": [ 
+            { "targets": 3, "orderable": false },
+            { "targets" :4, "visible" : false}
+        ],
+    });
+});
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,375 @@
+{% extends "base.html" %}
+
+{%block head%}
+<style>
+	.form-control[disabled]{color:black;}
+	.selectize-input.focus{border-color:red;box-shadow: inset 0 1px 1px rgba(255,0,0,0.75), 0 0 8px rgba(255,0,0, 0.6);}
+</style>
+{% endblock%}
+
+{% block title %} <div class="navbar-header"> <h2>&nbsp;{{name}} </h2></div> {% endblock %}
+
+{% block body %}
+<form method="POST" > {%csrf_token %}
+<div class="row">
+	<div class="col-md-12">
+	<section>
+		{%if add%}
+		<div class="onoffswitch" tabindex="-1">
+			{{form.is_taxable}}	
+			<label class="onoffswitch-label" for="myonoffswitch">
+				<span class="onoffswitch-inner"></span>
+				<span class="onoffswitch-switch"></span>
+			</label>
+		</div>
+		{%endif%}
+	</section>
+	</div>
+</div>
+<br/>
+<div class="row">
+	<section>
+	<div class="col-md-7">
+	<div class="card">
+		<div class="header">
+			<div class="form-group">
+				<label>Client</label>
+				{{form.client}}
+			</div>
+		</div>
+		<div class="content">
+			<div class="row">
+				<div class="col-md-12 form-group">
+					<label>Name</label>
+					<input class="form-control border-input" maxlength="120" type="text" tabindex="-1" id="name" disabled />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 form-group ">
+					<label>Address</label>
+					<input class="form-control border-input" maxlength="120" type="text" tabindex="-1" id="address" disabled />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 form-group ">
+					<label>State</label>
+					<input class="form-control border-input" maxlength="120" type="text" tabindex="-1" id="state" disabled />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 form-group ">
+					<label>Mobile</label>
+					<input class="form-control border-input" maxlength="120" type="text" tabindex="-1" id="mobile" disabled />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 form-group ">
+					<label>GSTIN</label>
+					<input class="form-control border-input" maxlength="120" type="text" tabindex="-1" id="gstin" disabled />
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	</section>
+
+	<section>
+	<div class="col-md-5">
+	<div class="card">
+		<div class="content">
+			<div class="row">
+				<div class="col-md-12 form-group ">
+					<label>Invoice Parcel Quantity</label>
+					<input class="form-control border-input" name="parcel_digits" id="id_parcel_digits" type="text" maxlength="5" placeholder="0" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 form-group">
+					<label>Delivery Date</label>
+					{{form.date_of_supply}}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 form-group">
+					<label>Place of Supply</label>
+					{{form.place_of_supply}}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 form-group">
+					<label>Transport Mode</label>
+					{{form.transport_mode}}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 form-group">
+					<label>Vehicle Number</label>
+					{{form.vehicle_number}}
+				</div>
+			</div>
+			<div class="row">
+
+				<div class="col-md-12 form-group">
+					<label>Agent</label>
+					{{ form.agent }}
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	</section>
+</div>
+
+<div class="row">
+	<div class="col-md-12 content form-group">
+		<label>Description</label>
+		{{form.description}}
+	</div>
+</div>
+
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="card">
+			<div class="content table-responsive table-full-width">
+				<table class="table table-striped" id="table">
+					<thead>
+					<tr>
+						<th width="5%">ID</th>
+						<th width="40%">Name</th>
+						<th width="10%">Size</th>
+						<th width="10%">Quantity</th>
+						<th width="10%">Rate</th>
+						<th width="10%">Total</th>
+						<th width="5%"></th>
+					</tr>
+					</thead>
+					<tbody>
+					{{formset.management_form}}
+					{% for eachformset in formset %}
+					<tr class="link-formset">
+						{%if not add%}
+							{{eachformset.id}}
+						{%endif%}
+						<td class="ranking">{{forloop.counter}}</td>
+						<td>
+							{{eachformset.product}}
+						</td>
+						<td>
+							{{eachformset.size}}
+						</td>
+						<td>{{eachformset.qty}}</td>
+						<td>{{eachformset.rate}}</td>
+						<td><input type="number" disabled value='0.0' class="form-control amount"></td>
+						<td></td>
+					</tr>
+					{% endfor %}
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td><input id="qtytotal" type="number" disabled value='0.00' class="form-control qtytotal"></td>
+						<td>TOTAL</td>
+						<td><input id="grandtotal" type="number" disabled value='0.00' class="form-control amount"></td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>Discount</td>
+						<td>{{form.discount}}</td>
+						<td><input type="number" disabled value='0.0' class="form-control discount"></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td colspan="2">Discounted Value</td>
+						<td><input type="number" disabled value='0.0' class="form-control discounted_amount"></td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+</form>
+{% endblock %}
+
+{% block script %}
+<script src="/static/js/jquery.formset.js" ></script>
+<script>
+var intVal = function ( i ) {
+    if (typeof i === 'string')  { num = parseFloat(i); }
+    else if (typeof i === 'number') { num = parseFloat(i) ; }
+    
+    if (num>0) return Math.round(num * 100) / 100;
+    else return 0.0;
+};
+
+$(document).ready( function(){
+	$("#sidebar .invoices")[0].className += " active";
+
+	// SELECTIZE SETUP
+	var client_options = $('#id_client').selectize({create: false , closeAfterSelect:true, placeholder : "Select A Client", selectOnTab : true , 
+		onItemAdd : function(x) {
+			$.ajax({ 
+				url:'/api/client/' + x,
+				type:'get',
+				success : function(data) {
+					$("#name").val(data.name);
+					$("#address").val(data.address);
+					$("#mobile").val(data.mobile);
+					$("#state").val(data.state);
+					$("#gstin").val(data.gstin);
+				},
+				failure : function(data) {alert("Nope");},
+			})
+		},
+	});
+	agent_options=$('#id_agent').selectize({create:true, closeAfterSelect:true, placeholder:"Select an Agent", selectOnTab:true});
+	
+	/// FORMSET SETUP
+	function addbutton(){
+		temp = $('select.product').last().selectize({
+				create : function(input,callback) {
+					$.ajax({ 
+						url:'/api/product/' + input,
+						type:'get',
+						success : function(data) {
+							callback({ value : data.id, text:input});
+						},
+						failure : function(data) {
+							console.log("Product did not get added");},
+					});
+				},
+				maxItems:1, placeholder : "Select A Item", selectOnTab : true 
+			});
+		temp[0].selectize.clear();
+		temp[0].selectize.focus();
+		temp = $('select.size').last().selectize({
+			create : function(input,callback) {
+				$.ajax({ 
+					url:'/api/size/' + input,
+					type:'get',
+					success : function(data) {
+						callback({ value : data.id, text:input});
+					},
+					failure : function(data) {
+						console.log("Size did not get added");},
+				});
+			},
+			closeAfterSelect:true, placeholder : "Size", selectOnTab : true
+		});
+		temp[0].selectize.clear();
+		$("div").scrollTop(5000);
+		deletebutton();
+	}
+
+	function deletebutton() { 
+	    	if ($('.delete-row').length < 2) { $('.delete-row').hide(); } 
+	    	else { $('.delete-row').show() }
+			$('tr.link-formset td.ranking').each( function(a,b) { b.textContent = a+1; });
+			$('#table').trigger('change');
+	}
+
+	$('#table').on('change' , function(){
+		qtytotal = 0.0;
+		grandtotal = 0.0;
+		discount = intVal( $('#id_discount').val() );
+		$('tr.link-formset').each(function() {
+			x = $(this).find('.rate').val();
+			y = $(this).find('.quantity').val();
+			z = x * y;
+			grandtotal += z;
+			qtytotal += intVal(y);
+			$(this).find('.amount').val(z);
+		});
+		$('#qtytotal').val(qtytotal);
+		$('#grandtotal').val(grandtotal);
+		$('.discount').val(grandtotal*discount*0.01);
+		$('.discounted_amount').val(grandtotal*(100.0-discount)*0.01);
+	});
+
+	$('#table tbody .link-formset').formset({
+	        addText: 'Add Item',
+	        deleteText: 'X',
+	        addCssClass : "btn btn-danger btn-block",
+	        added : addbutton,
+	        removed : deletebutton,
+	 });
+
+	$('#table').trigger('change');	  
+	$('#addbutton').after('<div class="col-md-3"><button type="submit" class="btn btn-danger btn-block">Generate Invoice</button></div>');
+	
+	//Keep this after formset 
+	{%if add%}
+		client_options[0].selectize.clear();
+		agent_options[0].selectize.clear();		
+		$('.product').last().selectize({
+			create : function(input,callback) {
+				$.ajax({ 
+					url:'/api/product/' + input,
+					type:'get',
+					success : function(data) {
+						callback({ value : data.id, text:input});
+					},
+					failure : function(data) {
+						console.log("Product did not get added");},
+				});
+			},
+			maxItems:1, placeholder : "Select A Item", selectOnTab : true });
+		$('.size').last().selectize({
+			create : function(input,callback) {
+				$.ajax({ 
+					url:'/api/size/' + input,
+					type:'get',
+					success : function(data) {
+						callback({ value : data.id, text:input});
+					},
+					failure : function(data) {
+						console.log("Size did not get added");},
+				});
+			},
+			closeAfterSelect:true, placeholder : "Size", selectOnTab : true});
+		$('.product')[0].selectize.clear();
+		$('.size')[0].selectize.clear();
+		$('.quantity').last().val('');
+		$('.rate').last().val('');
+	{%else%}
+		$.each( $('select.product') , function(x,y) { $(y).selectize({
+			closeAfterSelect:true, placeholder : "Select an Item", selectOnTab : true,
+			create : function(input,callback) {
+				$.ajax({ 
+					url:'/api/product/' + input,
+					type:'get',
+					success : function(data) {
+						callback({ value : data.id, text:input});
+					},
+					failure : function(data) {
+						console.log("Product did not get added");},
+				});
+			},
+		});
+		});
+		$.each( $('select.size') , function(x,y) { $(y).selectize({
+			closeAfterSelect:true, placeholder : "Size", selectOnTab : true,
+			create : function(input,callback) {
+				$.ajax({ 
+					url:'/api/size/' + input,
+					type:'get',
+					success : function(data) {
+						callback({ value : data.id, text:input});
+					},
+					failure : function(data) {
+						console.log("Size did not get added");},
+				});
+			},
+		}); 
+		});
+	{%endif%}
+});
+
+</script>
+{% endblock %}

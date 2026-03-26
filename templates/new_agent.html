@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}
+<div class="navbar-header"> <h2>&nbsp;New Agent</h2></div>
+{% endblock %}
+
+{% block body %}
+<form method="POST"> {% csrf_token %}
+<div class="row">
+<div class="col-md-8 col-md-offset-1">
+<br>
+<br>
+<div class="card">
+<div class="content">
+	<div class="row">
+		<div class="col-md-12 form-group">
+			<label>Name</label>
+			{{form.name}}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 form-group">
+			<label>Mobile</label>
+			{{form.mobile}}
+		</div>
+	</div>
+	<div class="text-center">
+		<button type="submit" class="btn btn-info btn-fill btn-wd">Save</button>
+	</div>
+	
+</div>
+</div>
+</div>
+</div>
+
+</form>
+{% endblock %}
+
+
+{% block script %}
+<script>
+$(document).ready( function(){
+	$("#sidebar .agents")[0].className += " active";
+});
+</script>
+{% endblock %}

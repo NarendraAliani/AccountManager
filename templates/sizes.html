@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}
+<div class="navbar-header"> <h2>&nbsp;Sizes </h2></div>
+{% endblock %}
+
+{% block body%}
+<div class="row">
+<div class="col-md-11">
+<div class="card">
+<form method="POST">{% csrf_token %}
+<div class="col-md-2"><h4>New Size</h4></div>
+<div class="col-md-8">{{form.name}}</div>
+<div class="col-md-2"><button type="submit" class="btn btn-info btn-fill btn-wd">Save</button></div>
+</form>
+</div>
+</div>
+</div>
+
+<div class="row">
+<div class="col-md-11">
+<div class="card">
+<div class="content table-responsive table-full-width">
+<table class="table table-striped">
+    <thead>
+        <th width="10%">ID</th>
+    	<th width="70%" style="text-align:center">Size</th>
+        <th width="20"></th>    
+    </thead>
+    <tbody>
+    {% for size in sizes%}
+        <tr>
+        	<td>{{forloop.counter}}</td>
+        	<td style="text-align:center">{{size.name}}</td>
+            <td></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+	$("#sidebar .sizes")[0].className += " active";
+</script>
+{% endblock %}

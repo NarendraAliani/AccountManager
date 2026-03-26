@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block head%}
+<link href="/static/css/datatables.min.css" rel="stylesheet"/>
+<style>
+.btn{border-radius:20px!important;margin:10px;}
+</style>
+{% endblock%}
+
+{% block title %}
+<div class="navbar-header"> <h2>Ledger of {{client.name}}</h2></div>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-9">
+        <h5 class="title">{{client.address|title}} , {{client.state|title}}</h5>
+        <h5 class="title">{{client.mobile}}</h5>
+    </div>
+    <div class="col-md-3">
+        <h2 style="text-align:left" id="debit_balance">0.0</h2>
+    </div>
+</div>
+<div class="row">
+<div class="col-md-12">
+    <div class="card card-plain">
+    <div class="content table-responsive table-full-width">
+        <table class="table table-hover card" id="datatable">
+        <thead>
+            <th width="5">&nbsp;</th>
+            <th width="20%">Date</th>
+            <th width="20%">Type</th>
+            <th width="20%">Tx No.</th>
+            <th width="15%">Debit</th>
+            <th width="15%">Credit</th>
+            <th width="5%"></th>
+            <th width="0%"></th>
+            <th width="0%"></th>
+        </thead>
+        <tbody>
+        {% for bill in client.bill_set.all%}
+            {%if bill.is_cleared%}
+            <tr class="text-danger">
+                <td><i class="fa fa-check-square-o fa-2x ajaxbutton" data-href="/api/invoices/{{bill.id}}"></i></td>
+            {%else%}
+            <tr>
+                <td><i class="fa fa-square-o fa-2x ajaxbutton" data-href="/api/invoices/{{bill.id}}"></i></td>
+            {%endif%}
+                <td>{{bill.invoice_date}}</td>
+                <td>Bill</td>
+                <td>{{bill.invoice_number}}</td>
+                <td>{{bill.total_after_tax}}</td>
+                <td>&nbsp;</td>
+                <td><a href="/invoices/{{bill.id}}"><i class="fa fa-chevron-circle-right fa-2x"></i></a></td>
+                <td>{%if bill.is_cleared %}clear{%else%}pending{%endif%}</td>
+                <td>{{bill.id}}</td>
+            </tr>
+        {% endfor%}
+        {% for payment in client.payment_set.all%}
+            {%if payment.is_cleared%}
+            <tr class="text-danger">
+                <td><i class="fa fa-check-square-o fa-2x ajaxbutton" data-href="/api/payments/{{payment.id}}"></i></td>
+            {%else%}
+            <tr>
+                <td><i class="fa fa-square-o fa-2x ajaxbutton" data-href="/api/payments/{{payment.id}}"></i></td>
+            {%endif%}
+                <td>{{payment.payment_date}}</td>
+                <td>Payment</td>
+                <td>{{payment.method_of_payment}}</td>
+                <td>&nbsp;</td>
+                <td>{{payment.paid_amount}}</td>
+                <td><a href="/payments/{{payment.id}}"><i class="fa fa-chevron-circle-right fa-2x"></i></a></td>
+                <td>{%if payment.is_cleared %}clear{%else%}pending{%endif%}</td>
+                <td>{{payment.id}}</td>
+            </tr>
+        {% endfor%}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tfoot>
+        </table>
+
+    </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="/static/js/jquery.datatables.js" type="text/javascript"></script>
+<script>
+var intVal = function ( i ) {
+    if (typeof i === 'string')  { num = parseFloat(i); }
+    else if (typeof i === 'number') { num = parseFloat(i) ; }
+    
+    if (num>0) return Math.round(num * 100) / 100;
+    else return 0.0;
+};
+
+$(document).ready(function(){
+    $("#sidebar .clients")[0].className += " active";
+
+    $('#datatable').DataTable({
+        paging: false,
+        dom: 'frtiBp',
+        buttons: [
+        {
+            extend: 'csv',
+            text: 'Export to Excel',
+            exportOptions: {
+                columns : [1,2,3,4,5]
+            },
+        },{
+            text: 'Edit Client',
+            action : function() {
+                window.location="/clients/{{client.id}}/edit";
+            },
+        },{
+            text: 'New Payment',
+            action : function() {
+                window.location="/payments/new";
+            },
+        },
+        ],
+
+        scrollY: '60vh',
+        "scrollCollapse": true,
+        "order": [[ 8, 'dsc' ]],
+        "bInfo": false,
+  
+        "footerCallback" : function(row, data, start, end, display)
+        {
+            var api = this.api(), data;
+            total1 = api.column(4 , { page: 'current'} ).data().reduce( function(a,b) { return a+intVal(b) } , 0.00);
+            $(api.column(4).footer()).html('<b>' + total1 + '</b>');
+
+            total = api.column(5 , { page: 'current'} ).data().reduce( function(a,b) { return a+intVal(b) } , 0.00);  
+            $(api.column(5).footer()).html('<b>' + total + '</b>');
+            $(api.column(1).footer()).html('<b>' + api.rows({ page: 'current'}).count() + ' items</b>');
+            $('#debit_balance')[0].innerHTML = total - total1;
+        },
+        "columnDefs" :[
+            {"targets" : [0,6], "orderable":false},
+            {"targets" : [7,8], "visible":false}
+        ],
+        
+    });
+    $('.dataTables_filter').append('<h3 class="title pull-left">GST : {{client.gstin}}</h3>');
+
+    //Ajax Method for Payment&Bill Clear<-->Pending
+    $('.ajaxbutton').on('click' , function(x) {
+        url = x.target.dataset.href;
+        $.ajax({ 
+                url:url,
+                type:'get',
+                success : function() {
+                    if ($(x.target).hasClass('fa-square-o')) {
+                        $(x.target).removeClass('fa-square-o').addClass('fa-check-square-o');
+                        $(x.target).parent().parent().addClass('text-danger');
+                    }
+                    else{
+                        $(x.target).removeClass('fa-check-square-o').addClass('fa-square-o');   
+                        $(x.target).parent().parent().removeClass('text-danger');
+                    }
+
+                },
+                failure : function() {},
+            }) 
+    });
+});
+</script>
+{% endblock %}

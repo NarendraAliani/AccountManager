@@ -1,0 +1,347 @@
+<html>
+<head>
+<style>
+@page{ margin:8mm; }
+body{ margin:0px; line-height: 1em; font-size:18px;}
+.page-break{ display:block; page-break-before:always; }
+*{margin:0px; padding:0px; }
+div,td{padding:0px 2px;}
+.dotted * {border-width:0px 1px; border-bottom:1px inset #d3d3d3;}
+.dark {background: #eee; font-weight: bold;}
+</style>
+</head>
+<body>
+<p style="position:fixed; right:0; top:0;">M:9724188555</p>
+<p style="position:fixed; text-align:center; width:100%;top:0;">ॐ<br>Jay Mata Di</p>
+<p style="position:fixed; right:0; top:20;">M:9558551553</p>
+<p style="position:fixed; right:0; top:40;">M:7263933103</p>
+<p style="position:fixed; left:400; bottom:0;"><b>⬤ RTGS CODE : PUNB0716700</b></p>
+<p style="position:fixed; left:80; bottom:0;"><b>⬤ PNB : A/c. No. 9302002100000232</b></p>
+
+<section align="center">
+	<h1 style="font-size:3em;margin:10px;padding-top:50px;">Gurukrupa Enterprise</h1>
+	<h3 style="padding:8px 20px; margin:5px;display:inline-block; border:2px solid black; border-radius:20px">Wholesale Exclusive Designer Shirts, Bablas<br>& Cloth Merchants</h3>
+	<h4 style="padding:3px;">Shop No. B-205, Karnavati Platinum (K9), Gheekanta, Ahmedabad</h4>
+</section>
+
+<section>
+	{%if invoice.is_taxable%}
+	<h3 style="text-align:center; padding:7px; font-style:bold;"> GSTIN : 24ABNPA2250N1ZR</h3>
+	<h4 style="text-align:center; padding:3px; border:2px solid black; font-style:bold;"> TAX INVOICE </h4>
+	{%else%}
+	<h4 style="text-align:center; padding:10px; border:2px solid black; font-style:bold;"> INVOICE </h4>
+	{%endif%}
+	<table style="width: 100%;" border="2px" cellspacing="0px">
+		<tbody>
+			<tr>
+				<td style="width:50%;"><h3>Invoice No. : {{invoice.invoice_number}}</h3></td>
+				<td style="width:50%;"><h3>Invoice Date : {{invoice.printable_date}}</h3></td>
+			</tr>
+			<tr>
+				<td style="width:50%;" colspan="2"><h4>To, {{invoice.client.name}}</h4></td>
+			</tr>
+			<tr>
+				<td style="width:50%; vertical-align:top" rowspan="3">&nbsp;{{invoice.client.address}}</td>
+				<td style="width:50%;">Date of Supply : &nbsp;&nbsp;{{invoice.printable_date_of_supply}}</td>
+			</tr>
+			<tr>
+				<td style="width:50%;">Place of Supply : &nbsp;&nbsp;{{invoice.place_of_supply}}</td>
+			</tr>
+			<tr>
+				<td style="width:50%;">Transport Mode : &nbsp;&nbsp;{{invoice.transport_mode}} </td>
+			</tr>
+			<tr>
+				<td style="width:50%;">Mobile : &nbsp;&nbsp;{{invoice.client.mobile}}</td>
+				<td style="width:50%;">Vehicle Number : &nbsp;&nbsp;{{invoice.vehicle_number}}</td>
+			</tr>
+			<tr>
+				{% if invoice.is_taxable%}
+				<td style="width:50%;">GSTIN : {{invoice.client.gstin}} </td>    
+				{% else %}
+				<td style="width:50%;">-</td>    
+				{% endif %}
+				<td style="width:50%;">Agent : {{invoice.agent}} </td>
+			</tr>
+			<tr>
+
+				<td style="width:50%;">
+				State : &nbsp;&nbsp;{{invoice.client.state}}
+				<div style="width:20%;border-left: 2px solid black; display: inline-block;float:right;">{{invoice.client.state_code}}</div>
+				<div style="width:20%;border-left: 2px solid black; display: inline-block;float:right;">Code :</div>
+				</td>
+				<td style="width:50%;">Agent Mobile: {{ invoice.agent.mobile }} </td>
+			</tr>
+		</tbody>
+	</table>
+</section>
+<section>
+	<table style="width: 100%;" border="1px" cellspacing="0px">
+		<tr>
+			<th width="5%"> Sr No.</th>
+			<th width="35%" colspan="2">Item Number</th>
+			<th width="12%">Size</th>
+			{% if invoice.is_taxable%}
+			<th width="12%"> HSN Code</th>
+			{%endif%}
+			<th width="12%">Qty.</th>
+			<th width="12%">Rate</th>
+			<th width="12%">Amount</th>
+		</tr>
+		<tbody>
+		{% for item in invoice.item_set.all %}
+			<tr class="dotted">
+				<td>{{forloop.counter}}</td>
+				<td colspan="2">{{item.product.name}}</td>
+				<td style="text-align:right">{{item.size}}</td>
+				{% if invoice.is_taxable%}
+				<td style="text-align:right">6205 {{item.product.hsn_code}}</td>
+				{% endif%}
+				<td style="text-align:right">{{item.qty}} Pcs</td>
+				<td style="text-align:right">{{item.rate}}</td>
+				<td style="text-align:right">{{item.amount}}</td>
+			</tr>
+
+			{%if invoice.is_taxable%}
+				{% if forloop.counter > 0 and forloop.counter|divisibleby:16 %}
+											</tbody>
+											</table>
+											</section>
+											<br>
+											<br>
+											<br>
+											<h1 style="text-align:center"> Continued on next page</h1>
+											<div class="page-break"></div>
+
+<section align="center">
+	<h1 style="font-size:3em;margin:10px;padding-top:50px;">Gurukrupa Enterprise</h1>
+	<h3 style="padding:8px 20px; margin:5px;display:inline-block; border:2px solid black; border-radius:20px">Wholesale Exclusive Designer Shirts, Bablas<br>& Cloth Merchants</h3>
+	<h4 style="padding:3px;">Shop No. 104, Karnavati Arcade, Nr. Nagarsheth no vando, Gheekanta, Ahmedabad</h4>
+</section>
+
+<section>
+	{%if invoice.is_taxable%}
+	<h3 style="text-align:center; padding:7px; font-style:bold;"> GSTIN : 24ABNPA2250N1ZR</h3>
+	<h4 style="text-align:center; padding:3px; border:2px solid black; font-style:bold;"> TAX INVOICE </h4>
+	{%else%}
+	<h4 style="text-align:center; padding:10px; border:2px solid black; font-style:bold;"> INVOICE </h4>
+	{%endif%}
+	<table style="width: 100%;" border="2px" cellspacing="0px">
+								<tbody>
+									<tr>
+										<td style="width:50%;"><h3>Invoice No. : {{invoice.invoice_number}}</h3></td>
+										<td style="width:50%;"><h3>Invoice Date : {{invoice.printable_date}}</h3></td>
+									</tr>
+									<tr>
+										<td style="width:50%;" colspan="2"><h2>To, {{invoice.client.name}}</h2></td>
+									</tr>
+									<tr>
+										<td style="width:50%; vertical-align:top" rowspan="3">&nbsp;{{invoice.client.address}}</td>
+										<td style="width:50%;">Date of Supply : &nbsp;&nbsp;{{invoice.printable_date_of_supply}}</td>
+									</tr>
+									<tr>
+										<td style="width:50%;">Place of Supply : &nbsp;&nbsp;{{invoice.place_of_supply}}</td>
+									</tr>
+									<tr>
+										<td style="width:50%;">Transport Mode : &nbsp;&nbsp;{{invoice.transport_mode}} </td>
+									</tr>
+									<tr>
+										<td style="width:50%;">Mobile : &nbsp;&nbsp;{{invoice.client.mobile}}</td>
+										<td style="width:50%;">Vehicle Number : &nbsp;&nbsp;{{invoice.vehicle_number}}</td>
+									</tr>
+									<tr>
+										{% if invoice.is_taxable%}
+										<td style="width:50%;">GSTIN : {{invoice.client.gstin}} </td>    
+										{% else %}
+										<td style="width:50%;">-</td>    
+										{% endif %}
+										<td style="width:50%;">Agent : {{invoice.agent}} </td>
+									</tr>
+									<tr>
+
+										<td style="width:50%;">
+										State : &nbsp;&nbsp;{{invoice.client.state}}
+										<div style="width:20%;border-left: 2px solid black; display: inline-block;float:right;">{{invoice.client.state_code}}</div>
+										<div style="width:20%;border-left: 2px solid black; display: inline-block;float:right;">Code :</div>
+										</td>
+										<td style="width:50%;">Agent Mobile: {{ invoice.agent.mobile }} </td>
+									</tr>
+								</tbody>
+							</table>
+						</section>
+						<section>
+							<table style="width: 100%;" border="1px" cellspacing="0px">
+								<tr>
+									<th width="5%"> Sr No.</th>
+									<th width="35%" colspan="2">Item Number</th>
+									<th width="12%">Size</th>
+									{% if invoice.is_taxable%}
+									<th width="12%"> HSN Code</th>
+									{%endif%}
+									<th width="12%">Qty.</th>
+									<th width="12%">Rate</th>
+									<th width="12%">Amount</th>
+								</tr>
+								<tbody>
+
+				{% endif %}
+			{%else%}
+				{% if forloop.counter > 0 and forloop.counter|divisibleby:20 %}
+					</tbody>
+					</table>
+					</section>
+					<br>
+					<br>
+					<br>
+					<h1 style="text-align:center"> Continued on next page</h1>
+					<div class="page-break"></div>
+					<section align="center">
+					<h1 style="font-size:3em;margin:10px;padding-top:50px;">Gurukrupa Enterprise</h1>
+					<h3 style="padding:8px 20px; margin:10px;display:inline-block; border:2px solid black; border-radius:20px">Wholesale Exclusive Designer Shirts and Babla<br>&Cloth Merchants</h3>
+					<h4 style="padding:5px;">Shop No. 104, Karnavati Arcade, Nr. Nagarsheth no vando, Gheekanta, Ahmedabad</h4>
+										</section>
+
+										<section>
+											{%if invoice.is_taxable%}
+											<h3 style="text-align:center; padding:10px; font-style:bold;"> GSTIN : 24ABNPA2250N1ZR</h3>
+											<h4 style="text-align:center; padding:10px; border:2px solid black; font-style:bold;"> TAX INVOICE </h4>
+											{%else%}
+											<h4 style="text-align:center; padding:10px; border:2px solid black; font-style:bold;"> INVOICE </h4>
+											{%endif%}
+											<table style="width: 100%;" border="2px" cellspacing="0px">
+												<tbody>
+													<tr>
+														<td style="width:50%;"><h3>Invoice No. : {{invoice.invoice_number}}</h3></td>
+														<td style="width:50%;"><h3>Invoice Date : {{invoice.printable_date}}</h3></td>
+													</tr>
+													<tr>
+														<td style="width:50%;" colspan="2"><h2>To, {{invoice.client.name}}</h2></td>
+													</tr>
+													<tr>
+														<td style="width:50%; vertical-align:top" rowspan="3">&nbsp;{{invoice.client.address}}</td>
+														<td style="width:50%;">Date of Supply : &nbsp;&nbsp;{{invoice.printable_date_of_supply}}</td>
+													</tr>
+													<tr>
+														<td style="width:50%;">Place of Supply : &nbsp;&nbsp;{{invoice.place_of_supply}}</td>
+													</tr>
+													<tr>
+														<td style="width:50%;">Transport Mode : &nbsp;&nbsp;{{invoice.transport_mode}} </td>
+													</tr>
+													<tr>
+														<td style="width:50%;">Mobile : &nbsp;&nbsp;{{invoice.client.mobile}}</td>
+														<td style="width:50%;">Vehicle Number : &nbsp;&nbsp;{{invoice.vehicle_number}}</td>
+													</tr>
+													<tr>
+														{% if invoice.is_taxable%}
+														<td style="width:50%;">GSTIN : {{invoice.client.gstin}} </td>    
+														{% else %}
+														<td style="width:50%;">-</td>    
+														{% endif %}
+														<td style="width:50%;">Agent : {{invoice.agent}} </td>
+													</tr>
+													<tr>
+
+														<td style="width:50%;">
+														State : &nbsp;&nbsp;{{invoice.client.state}}
+														<div style="width:20%;border-left: 2px solid black; display: inline-block;float:right;">{{invoice.client.state_code}}</div>
+														<div style="width:20%;border-left: 2px solid black; display: inline-block;float:right;">Code :</div>
+														</td>
+														<td style="width:50%;">Agent Mobile: {{ invoice.agent.mobile }} </td>
+													</tr>
+												</tbody>
+											</table>
+										</section>
+										<section>
+											<table style="width: 100%;" border="1px" cellspacing="0px">
+												<tr>
+													<th width="5%"> Sr No.</th>
+													<th width="35%" colspan="2">Item Number</th>
+													<th width="12%">Size</th>
+													{% if invoice.is_taxable%}
+													<th width="12%"> HSN Code</th>
+													{%endif%}
+													<th width="12%">Qty.</th>
+													<th width="12%">Rate</th>
+													<th width="12%">Amount</th>
+												</tr>
+												<tbody>
+				{% endif %}
+			{% endif %}
+		{% endfor%}
+
+		{% for i in blank %}
+			<tr class="dotted">
+				<td>{{i}}</td>
+				<td colspan="2">&nbsp;</td>
+				<td>&nbsp;</td>
+				{% if invoice.is_taxable%}
+				<td>&nbsp;</td>
+				{% endif%}
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+		{% endfor%}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td></td>
+				<td colspan="2"></td>
+				<td></td>
+				<td></td>
+				<td style="text-align:right; font-style:bold;">{{invoice.qty_total}} Pcs</td>
+				{%if invoice.discount > 0 %}
+				<td style="text-align:right;"><h5>Discount @{{invoice.discount}} % </h5></td>
+				<td style="text-align:right;"><h5>₹{{invoice.discount_value}}</h5></td>
+				{%else%}
+				<td></td>
+				<td></td>
+				{%endif%}
+			</tr>
+		{% if invoice.is_taxable %}
+			<tr>
+				<td colspan="2" style="text-align:center;"><h4>Amount before Tax </h4></td>
+				<td colspan="5" style="text-align:left;"> <h4> {{invoice.total_before_tax_words}}</h4></td>
+				<td style="text-align:right;"><h4>₹ {{invoice.total_before_tax}}</h4></td>
+			</tr>
+			<tr>
+				<td rowspan="3" colspan="5">
+					<ul>
+						<li>✍ Goods once sold cannot be taken back</li>
+						<li>✍ Subject to Ahmedabad Jurisdiction</li>
+						<li>✍ After due date 24% interest will be charged</li>
+					</ul>
+				</td>
+				<td style="text-align:right">Add. SGST</td>
+				<td style="text-align:right">{{invoice.sgst}} %</td>
+				<td colspan="2" style="text-align:right"> {{invoice.sgst_value}}</td>    
+			</tr>
+			<tr>
+				<td style="text-align:right">Add. CGST</td>
+				<td style="text-align:right">{{invoice.cgst}} %</td>
+				<td colspan="2" style="text-align:right"> {{invoice.cgst_value}}</td>
+			</tr>
+			<tr>
+				<td style="text-align:right">Add. IGST</td>
+				<td style="text-align:right">{{invoice.igst}} %</td>
+				<td colspan="2" style="text-align:right"> {{invoice.igst_value}}</td>
+			</tr>
+			<tr>
+				<td colspan="2"><h4>Total Tax Amount</h4></td>
+				<td colspan="4">{{invoice.total_tax_words}}</td>
+				<td colspan="2" style="text-align:right"><h4>₹ {{invoice.total_tax}}</h4></td>
+			</tr>
+			{% endif %}
+		<tr>
+			<td colspan="2"><h4>Total Bill Amount</h4></td>
+			<td colspan="4"><h4>{{invoice.total_after_tax_words}}</h4></td>
+			<td colspan="2" style="text-align:right;"><h4>₹ {{invoice.total_after_tax}}</h4></td>
+		</tr>
+		</tfoot>
+
+	</table>
+	<div width="100%" style="float:right; border-bottom:1px outset black;">
+		<h5>For GuruKrupa Enterprise,</h5><br><br><br>
+	</div>
+</section>
+</body>
+</html>

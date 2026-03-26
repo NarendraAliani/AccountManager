@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block head%}
+<style>
+tfoot tr td {border: 0px!important;}
+.imp {border:2px solid black;}
+</style>
+{% endblock%}
+{% block title %}
+<div class="navbar-header"> <h2>Payment </h2></div>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+<br>
+<div class="col-md-12">
+<section>
+<div class="card">  
+    <div class="content">
+        <div class="row">
+            <div class="col-md-10">  <h3>Date : {{payment.payment_date}}</h3> </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+                <h2>{{payment.client.name}}</h2>
+                <h5>{{payment.client.address}}</h5>
+                <h5>{{payment.client.mobile}}</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">  <h3>Amount Paid : {{payment.paid_amount}}</h3>
+        </div>
+    </div>
+</div>
+</section>
+<div class="col-md-2 col-md-offset-1">
+    <a href="/payments/{{payment.id}}/edit"><button class="btn btn-fill btn-info" >Edit Payment</button></a>
+</div>
+<div class="col-md-2">
+    <a href="/clients/{{payment.client.id}}"><button class="btn btn-fill btn-info">Goto Client Ledger</button></a>
+</div>
+</div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$("#sidebar .payments")[0].className += " active";
+</script>
+{% endblock %}

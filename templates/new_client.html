@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}
+<div class="navbar-header"> <h2>&nbsp;New Client</h2></div>
+{% endblock %}
+
+{% block body %}
+<form method="POST"> {% csrf_token %}
+<div class="row">
+<div class="col-md-10">
+<div class="card">
+<div class="content">
+	<div class="row">
+		<div class="col-md-12 form-group">
+			<label>Name</label>
+			{{form.name}}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 form-group">
+			<label>Address</label>
+			{{form.address}}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 form-group">
+			<label>State</label>
+			{{form.state_code}}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 form-group">
+			<label>Mobile</label>
+			{{form.mobile}}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 form-group">
+			<label>GSTIN</label>
+			{{form.gstin}}
+		</div>
+	</div>
+	<div class="text-center">
+		<button type="submit" class="btn btn-info btn-fill btn-wd">Save</button>
+	</div>
+	
+</div>
+</div>
+</div>
+</div>
+
+</form>
+{% endblock %}
+
+
+{% block script %}
+<script>
+$(document).ready( function(){
+	
+	var state_box = $('select').selectize({create: false , closeAfterSelect:true, placeholder : "Select a State", selectOnTab : true});
+	{%if add%}
+	state_box[0].selectize.clear();
+	{%endif%}
+	$("#sidebar .clients")[0].className += " active";
+});
+</script>
+{% endblock %}
