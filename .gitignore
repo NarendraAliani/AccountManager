@@ -1,0 +1,6 @@
+db.sqlite3
+a.bat
+chrome.lnk
+desktop.ini
+__pycache__/
+*.pyc

@@ -112,4 +112,3 @@
 - `/payments/<id>/edit` - edit payment
 - `/sizes/` - size master
 - `/admin/` - Django admin
-# AccountManager
