@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}
+<h2>Maintenance</h2>
+{% endblock %}
+
+{% block page_actions %}
+<a href="/maintenance/backup/" class="btn btn-info btn-fill btn-sm">Download Backup</a>
+{% endblock %}
+
+{% block body %}
+<style>
+	.restore-confirm-row {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+		margin: 12px 0 16px;
+		padding: 12px 14px;
+		border: 1px solid #f0b27a;
+		border-radius: 8px;
+		background: #fffaf3;
+	}
+	.restore-confirm-row input[type="checkbox"] {
+		appearance: checkbox;
+		-webkit-appearance: checkbox;
+		width: 18px;
+		height: 18px;
+		min-width: 18px;
+		min-height: 18px;
+		margin: 2px 0 0 0;
+		flex: 0 0 auto;
+		accent-color: #e67e22;
+	}
+	.restore-confirm-row label {
+		margin: 0;
+		cursor: pointer;
+		font-weight: 600;
+		color: #d35400;
+		line-height: 1.4;
+	}
+</style>
+<div class="row">
+	<div class="col-md-12">
+		<div class="alert alert-warning">
+			This page is for local office backup and restore. Backup downloads are safe. Restore will overwrite the current database and media files, so use it only when you really want to roll back.
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="card">
+			<div class="content">
+				<h3 style="margin-top:0;">Create Backup</h3>
+				<p>Download a ZIP containing the current SQLite database and uploaded media files.</p>
+				<form method="post">
+					{% csrf_token %}
+					<input type="hidden" name="action" value="create_backup">
+					<button type="submit" class="btn btn-info btn-fill">Create & Download Backup</button>
+				</form>
+				{% if latest_snapshot %}
+				<p style="margin-top:15px;">
+					<strong>Latest local snapshot:</strong> {{ latest_snapshot.name }}
+				</p>
+				{% endif %}
+				<p><strong>Database size:</strong> {{ db_size }} bytes</p>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="card">
+			<div class="content">
+				<h3 style="margin-top:0;">Restore Backup</h3>
+				<p>Upload a previously downloaded backup ZIP to restore the app.</p>
+				<form method="post" enctype="multipart/form-data">
+					{% csrf_token %}
+					<input type="hidden" name="action" value="restore">
+					<div class="form-group">
+						<label>Backup ZIP</label>
+						<input type="file" name="backup_file" id="restore-backup-file" class="form-control" accept=".zip" required>
+					</div>
+					<div class="restore-confirm-row">
+						<input type="checkbox" name="confirm_restore" id="confirm-restore" value="on">
+						<label for="confirm-restore">I understand this will overwrite the current data</label>
+					</div>
+					<p style="margin-top:-6px;color:#666;font-size:12px;">Restore copies the backup into the live SQLite database and may restart the app files in the background.</p>
+					<button type="submit" id="restore-backup-button" class="btn btn-danger btn-fill" disabled>Restore Backup</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="card" style="border: 2px solid #e74c3c;">
+			<div class="content">
+				<h3 style="margin-top:0; color:#e74c3c;">Danger Zone</h3>
+				<p>
+					This action removes invoice data, payment data, and product data only from the current installation.
+					Clients, agents, sizes, and firm settings will remain in place.
+					A safety snapshot is saved before the cleanup runs.
+				</p>
+				<form method="post" onsubmit="return confirm('WARNING: This will remove invoice, payment, and product data only. Clients, agents, sizes, and firm settings will stay. A safety snapshot will be saved first. Continue?');">
+					{% csrf_token %}
+					<input type="hidden" name="action" value="truncate_database">
+					<div class="restore-confirm-row" style="border-color:#f5a97f;background:#fff4ea;">
+						<input type="checkbox" name="confirm_truncate" id="confirm-truncate" value="on" required>
+						<label for="confirm-truncate">I understand this will remove invoice, payment, and product data.</label>
+					</div>
+					<button type="submit" class="btn btn-danger btn-fill">Remove Invoice, Payment & Product Data</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="card">
+			<div class="content">
+				<h3 style="margin-top:0;">Packaging Notes</h3>
+				<ul>
+					<li>Use <code>launch_local.bat</code> or <code>a.bat</code> to start the local server.</li>
+					<li>Keep <code>db.sqlite3</code> and <code>media/</code> together when moving the app to another office PC.</li>
+					<li>Take a backup before upgrading the system or running the cleanup tool.</li>
+					<li>The cleanup button removes invoices, payments, and products, while keeping clients, agents, sizes, and firm settings.</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$("#sidebar .maintenance")[0].className += " active";
+
+(function() {
+	var fileInput = document.getElementById("restore-backup-file");
+	var confirmInput = document.getElementById("confirm-restore");
+	var restoreButton = document.getElementById("restore-backup-button");
+	if (!fileInput || !confirmInput || !restoreButton) {
+		return;
+	}
+
+	function syncRestoreButton() {
+		restoreButton.disabled = !(fileInput.files.length > 0 && confirmInput.checked);
+	}
+
+	fileInput.addEventListener("change", syncRestoreButton);
+	confirmInput.addEventListener("change", syncRestoreButton);
+	syncRestoreButton();
+})();
+</script>
+{% endblock %}

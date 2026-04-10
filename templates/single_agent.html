@@ -7,9 +7,7 @@
 </style>
 {% endblock%}
 
-{% block title %}
-<div class="navbar-header"> <h2>Ledger of {{agent.name}}</h2></div>
-{% endblock %}
+{% block title %}<h2>Ledger of {{ agent.name }}</h2>{% endblock %}
 
 {% block body %}
 <div class="row">
@@ -28,13 +26,13 @@
             <th width="0%"></th>
         </thead>
         <tbody>
-        {% for bill in agent.bill_set.all%}
+        {% for bill in agent.active_bills %}
             <tr class="{%if bill.is_cleared%}text-info{%endif%}">
                 <td>{%if bill.is_cleared%}clear{%else%}pending{%endif%}</td>
                 <td>{{bill.invoice_date}}</td>
-                <td>{{bill.invoice_number}}</td>
+                <td>{{bill.display_invoice_number}}</td>
                 <td><a href="/clients/{{bill.client.id}}">{{bill.client.name|title}}</a></td>
-                <td>{{bill.client.debit_balance}}</td>
+                <td>{{bill.client.current_debit_balance}}</td>
                 <td>{{bill.client.state}}</td>
                 <td>{{bill.total_after_tax}}</td>
                 <td>{{bill.id}}</td>

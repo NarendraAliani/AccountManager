@@ -1,7 +1,422 @@
 {% extends "base.html" %}
 
-{% block title %}
-<div class="navbar-header"> <h2>&nbsp;Dashboard </h2></div>
+{% block head %}
+<style>
+.dash-card {
+	border-radius: 18px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+.dash-card .content {
+	padding: 24px;
+}
+.kpi-grid {
+	display: grid;
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+	gap: 18px;
+	margin-bottom: 18px;
+}
+.kpi-grid-five {
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.metric {
+	min-height: 98px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	border-radius: 18px;
+	color: #fff;
+	padding: 10px 12px;
+	margin-bottom: 0;
+}
+.metric h2, .metric h3, .metric p {
+	margin: 0;
+	color: inherit;
+}
+.metric p {
+	font-size: 11px;
+	line-height: 1.15;
+	font-weight: 600;
+	letter-spacing: 0.2px;
+}
+.metric .value {
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 1.1;
+	margin: 4px 0 6px;
+}
+.metric.blue { background: linear-gradient(135deg, #0ea5e9, #2563eb); }
+.metric.green { background: linear-gradient(135deg, #10b981, #059669); }
+.metric.orange { background: linear-gradient(135deg, #f59e0b, #ea580c); }
+.metric.slate { background: linear-gradient(135deg, #475569, #0f172a); }
+.metric.purple { background: linear-gradient(135deg, #8b5cf6, #4c1d95); }
+.metric.teal { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+.hero {
+	background: linear-gradient(135deg, rgba(14,165,233,0.12), rgba(37,99,235,0.08));
+	border: 1px solid rgba(37,99,235,0.14);
+	border-radius: 24px;
+	padding: 24px 28px;
+	margin-bottom: 24px;
+}
+.section-card {
+	border-radius: 18px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+	margin-bottom: 24px;
+}
+.section-card .content {
+	padding: 22px 24px;
+}
+.info-grid {
+	display: grid;
+	grid-template-columns: repeat(12, minmax(0, 1fr));
+	gap: 18px;
+	margin-top: 18px;
+}
+.info-panel {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 0;
+}
+.info-panel .content {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+.panel-scroll {
+	flex: 1;
+	min-height: 0;
+	overflow: auto;
+}
+.panel-title {
+	margin-top: 0;
+	margin-bottom: 14px;
+	font-size: 24px;
+	line-height: 1.15;
+}
+.panel-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	flex-wrap: wrap;
+	margin-bottom: 12px;
+}
+.panel-header .panel-title {
+	margin-bottom: 0;
+}
+.sort-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 0;
+}
+.sort-toggle .btn {
+	margin: 0;
+	padding: 5px 10px;
+	font-size: 11px;
+	line-height: 1.1;
+	height: 30px;
+}
+.sort-toggle .btn + .btn {
+	margin-left: -1px;
+}
+.compact-table thead th {
+	font-size: 12px;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+.compact-table tbody td {
+	font-size: 11px;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	line-height: 1.2;
+}
+.kpi-meta {
+	font-size: 10px;
+	opacity: 0.9;
+	margin-top: 4px;
+	line-height: 1.2;
+	word-break: break-word;
+}
+.trend-mini {
+	font-size: 15px;
+	line-height: 1.6;
+}
+.trend-mini strong {
+	display: inline-block;
+	min-width: 140px;
+}
+.feed-item {
+	padding: 12px 0;
+	border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+.feed-item:last-child {
+	border-bottom: 0;
+}
+.feed-meta {
+	font-size: 13px;
+	opacity: 0.75;
+}
+.feed-pill {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 999px;
+	font-size: 12px;
+	margin-left: 6px;
+	background: rgba(14,165,233,0.12);
+	color: #0f172a;
+}
+@media (max-width: 1199px) {
+	.kpi-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+	.kpi-grid-five {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+@media (max-width: 767px) {
+	.kpi-grid {
+		grid-template-columns: repeat(1, minmax(0, 1fr));
+	}
+	.kpi-grid-five {
+		grid-template-columns: repeat(1, minmax(0, 1fr));
+	}
+	.metric {
+		min-height: 92px;
+	}
+	.info-grid {
+		grid-template-columns: 1fr;
+	}
+	.panel-title {
+		font-size: 20px;
+	}
+}
+</style>
+{% endblock %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+<div class="hero">
+		<div class="row">
+		<div class="col-md-8">
+			<h2 style="margin-top:0;">{{ firm.firm_name|default:"Gurukrupa Enterprise" }}</h2>
+			<p style="font-size:16px;margin-bottom:8px;">Overview: <strong>{{ overview_label|default:"All Records" }}</strong></p>
+			<p style="font-size:16px;margin-bottom:0;">Today: <strong>{{ current_date|date:"d M Y" }}</strong></p>
+		</div>
+		<div class="col-md-4 text-right">
+			<h4 style="margin-top:0;">Quick Status</h4>
+			<p style="margin-bottom:6px;">Month Sales: <strong>{{ month_sales }}</strong></p>
+			<p style="margin-bottom:6px;">Month Collections: <strong>{{ month_collections }}</strong></p>
+			<p style="margin-bottom:0;">Outstanding: <strong>{{ total_receivables }}</strong></p>
+		</div>
+	</div>
+</div>
+
+<div class="kpi-grid kpi-grid-five">
+	<div class="metric blue dash-card">
+		<p>Sales This Month</p>
+		<div class="value">{{ month_sales }}</div>
+		<div class="kpi-meta">Last month: {{ last_month_sales }}</div>
+		<div class="kpi-meta">Change: {{ month_sales_change }}</div>
+	</div>
+	<div class="metric green dash-card">
+		<p>Collections This Month</p>
+		<div class="value">{{ month_collections }}</div>
+		<div class="kpi-meta">Last month: {{ last_month_collections }}</div>
+		<div class="kpi-meta">Change: {{ month_collections_change }}</div>
+	</div>
+	<div class="metric orange dash-card">
+		<p>Outstanding Receivables</p>
+		<div class="value">{{ total_receivables }}</div>
+		<div class="kpi-meta">{{ pending_invoice_count }} pending invoices</div>
+	</div>
+	<div class="metric slate dash-card">
+		<p>Overdue Receivables</p>
+		<div class="value">{{ overdue_total }}</div>
+		<div class="kpi-meta">pending beyond current month</div>
+	</div>
+	<div class="metric teal dash-card">
+		<p>Pending Invoice Value</p>
+		<div class="value">{{ pending_invoice_total }}</div>
+		<div class="kpi-meta">{{ pending_invoice_count }} invoices open</div>
+	</div>
+</div>
+
+<div class="kpi-grid kpi-grid-five">
+	<div class="metric blue dash-card">
+		<p>Total Sales YTD</p>
+		<div class="value">{{ sales_total }}</div>
+		<div class="kpi-meta">{{ invoice_count }} invoices issued</div>
+	</div>
+	<div class="metric green dash-card">
+		<p>Collections YTD</p>
+		<div class="value">{{ collections_total }}</div>
+		<div class="kpi-meta">{{ payment_count }} payments received</div>
+	</div>
+	<div class="metric teal dash-card">
+		<p>Sales</p>
+		<div class="value">{{ gst_cards.0.value }}</div>
+		<div class="kpi-meta">{{ gst_cards.0.subtext }}</div>
+	</div>
+	<div class="metric orange dash-card">
+		<p>CGST + SGST</p>
+		<div class="value">{{ gst_cards.1.value }}</div>
+		<div class="kpi-meta">{{ gst_cards.1.subtext }}</div>
+	</div>
+	<div class="metric slate dash-card">
+		<p>IGST</p>
+		<div class="value">{{ gst_cards.2.value }}</div>
+		<div class="kpi-meta">{{ gst_cards.2.subtext }}</div>
+	</div>
+</div>
+
+<div class="info-grid">
+	<div class="card section-card info-panel" style="grid-column: span 8;">
+		<div class="content">
+			<div class="panel-header">
+				<h3 class="panel-title">Monthly Movement</h3>
+				<div class="sort-toggle">
+					<a href="/?movement_sort=asc" class="btn btn-default {% if movement_sort != 'desc' %}btn-fill{% endif %}">Oldest First</a>
+					<a href="/?movement_sort=desc" class="btn btn-default {% if movement_sort == 'desc' %}btn-fill{% endif %}">Latest First</a>
+				</div>
+			</div>
+			<div class="panel-scroll">
+				<table class="table table-hover compact-table" style="margin-bottom:0;">
+					<thead>
+						<tr>
+							<th>Month</th>
+							<th class="right">Sales</th>
+							<th class="right">Collections</th>
+							<th class="right">Net Movement</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for row in monthly_rows %}
+						<tr>
+							<td>{{ row.month|date:"M Y" }}</td>
+							<td class="right">{{ row.sales }}</td>
+							<td class="right">{{ row.collections }}</td>
+							<td class="right">{{ row.net_movement }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="card section-card info-panel" style="grid-column: span 4;">
+		<div class="content">
+			<h3 class="panel-title">Aging Snapshot</h3>
+			<div class="panel-scroll">
+				{% for bucket in aging_buckets %}
+				<div class="trend-mini">
+					<strong>{{ bucket.label }}</strong> {{ bucket.count }} invoices, {{ bucket.amount }}
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+
+	<div class="card section-card info-panel" style="grid-column: span 6;">
+		<div class="content">
+			<h3 class="panel-title">Recent Activity</h3>
+			<div class="panel-scroll">
+				<table class="table table-hover compact-table" style="margin-bottom:0;">
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>Type</th>
+							<th>Party</th>
+							<th class="right">Amount</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for row in recent_activity %}
+						<tr>
+							<td>{{ row.date|date:"d M" }}</td>
+							<td>{{ row.kind }} <span class="feed-pill">{{ row.status }}</span></td>
+							<td><a href="{{ row.url }}">{{ row.party }}</a><div class="feed-meta">{{ row.title }}</div></td>
+							<td class="right"><strong>{{ row.amount }}</strong></td>
+						</tr>
+						{% empty %}
+						<tr><td colspan="4">No recent activity.</td></tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="card section-card info-panel" style="grid-column: span 6;">
+		<div class="content">
+			<h3 class="panel-title">Top Overdue Clients</h3>
+			<div class="panel-scroll">
+				{% for row in top_receivables %}
+				<div class="trend-mini">
+					<strong><a href="/clients/{{ row.client_id }}">{{ row.name }}</a></strong> {{ row.invoice_count }} invoices, {{ row.closing_balance }}
+				</div>
+				{% empty %}
+				<div class="trend-mini">No outstanding clients.</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+
+	<div class="card section-card info-panel" style="grid-column: span 6;">
+		<div class="content">
+			<h3 class="panel-title">Top 5 Products</h3>
+			<div class="panel-scroll">
+				<table class="table table-hover compact-table" style="margin-bottom:0;">
+					<thead>
+						<tr>
+							<th>Product</th>
+							<th class="right">Qty</th>
+							<th class="right">Revenue</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for row in top_products %}
+						<tr>
+							<td>{{ row.product__name }}</td>
+							<td class="right">{{ row.total_qty }}</td>
+							<td class="right"><strong>{{ row.total_amount }}</strong></td>
+						</tr>
+						{% empty %}
+						<tr><td colspan="3">No product sales found.</td></tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="card section-card info-panel" style="grid-column: span 6;">
+		<div class="content">
+			<h3 class="panel-title">Top 5 Agents</h3>
+			<div class="panel-scroll">
+				<table class="table table-hover compact-table" style="margin-bottom:0;">
+					<thead>
+						<tr>
+							<th>Agent</th>
+							<th class="right">Invoices</th>
+							<th class="right">Value</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for row in top_agents %}
+						<tr>
+							<td>{{ row.agent__name }}</td>
+							<td class="right">{{ row.invoice_count }}</td>
+							<td class="right"><strong>{{ row.total_amount }}</strong></td>
+						</tr>
+						{% empty %}
+						<tr><td colspan="3">No agent data found.</td></tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}
 
 {% block script %}

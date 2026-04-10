@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 
 {% block title %}
-<div class="navbar-header"> <h2>&nbsp;New Client</h2></div>
+<h2>New Client</h2>
 {% endblock %}
 
 {% block body %}
 <form method="POST"> {% csrf_token %}
+{% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
 <div class="row">
 <div class="col-md-10">
 <div class="card">

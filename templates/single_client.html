@@ -7,9 +7,7 @@
 </style>
 {% endblock%}
 
-{% block title %}
-<div class="navbar-header"> <h2>Ledger of {{client.name}}</h2></div>
-{% endblock %}
+{% block title %}<h2>Ledger of {{ client.name }}</h2>{% endblock %}
 
 {% block body %}
 <div class="row">
@@ -18,7 +16,7 @@
         <h5 class="title">{{client.mobile}}</h5>
     </div>
     <div class="col-md-3">
-        <h2 style="text-align:left" id="debit_balance">0.0</h2>
+        <h2 style="text-align:left" id="debit_balance">{{ client.current_debit_balance }}</h2>
     </div>
 </div>
 <div class="row">
@@ -38,7 +36,7 @@
             <th width="0%"></th>
         </thead>
         <tbody>
-        {% for bill in client.bill_set.all%}
+        {% for bill in client.active_bills %}
             {%if bill.is_cleared%}
             <tr class="text-danger">
                 <td><i class="fa fa-check-square-o fa-2x ajaxbutton" data-href="/api/invoices/{{bill.id}}"></i></td>
@@ -46,9 +44,9 @@
             <tr>
                 <td><i class="fa fa-square-o fa-2x ajaxbutton" data-href="/api/invoices/{{bill.id}}"></i></td>
             {%endif%}
-                <td>{{bill.invoice_date}}</td>
+                <td>{{bill.printable_date}}</td>
                 <td>Bill</td>
-                <td>{{bill.invoice_number}}</td>
+                <td>{{bill.display_invoice_number}}</td>
                 <td>{{bill.total_after_tax}}</td>
                 <td>&nbsp;</td>
                 <td><a href="/invoices/{{bill.id}}"><i class="fa fa-chevron-circle-right fa-2x"></i></a></td>
@@ -56,7 +54,7 @@
                 <td>{{bill.id}}</td>
             </tr>
         {% endfor%}
-        {% for payment in client.payment_set.all%}
+        {% for payment in client.active_payments %}
             {%if payment.is_cleared%}
             <tr class="text-danger">
                 <td><i class="fa fa-check-square-o fa-2x ajaxbutton" data-href="/api/payments/{{payment.id}}"></i></td>
@@ -64,7 +62,7 @@
             <tr>
                 <td><i class="fa fa-square-o fa-2x ajaxbutton" data-href="/api/payments/{{payment.id}}"></i></td>
             {%endif%}
-                <td>{{payment.payment_date}}</td>
+                <td>{{payment.printable_date}}</td>
                 <td>Payment</td>
                 <td>{{payment.method_of_payment}}</td>
                 <td>&nbsp;</td>

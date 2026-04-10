@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{ firm.firm_name|default:"Gurukrupa Enterprise" }} - {{ invoice.display_invoice_number }}</title>
+	<style>
+		:root {
+			--border: #222;
+			--ink: #111;
+			--font-primary: "Times New Roman", "Bookman Old Style",serif;
+			--font-heading: "Times New Roman", Times, serif;
+			--font-ui: "Times New Roman",Arial, Helvetica, sans-serif;
+			--brandFontSize: 36px;
+			--stdFontSize: 16px;
+			--miniFontSize: 12px;
+			--titleFontSize: 20px;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+			background: #fff;
+			color: var(--ink);
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		body {
+			padding: 2.5mm 4.5mm 4.5mm;
+		}
+
+		.page {
+			width: 100%;
+			max-width: 210mm;
+			margin: 0 auto;
+		}
+
+		.invoice-page {
+			min-height: 273mm;
+			break-after: page;
+			page-break-after: always;
+		}
+
+		.invoice-page:last-child {
+			break-after: auto;
+			page-break-after: auto;
+		}
+
+		.continued-note {
+			text-align: center;
+			font-size: var(--titleFontSize);
+			font-weight: 700;
+			margin: 10px 0 0;
+			letter-spacing: 0.5px;
+			line-height: 1;
+		}
+
+		.header {
+			position: relative;
+			padding-top: 2mm;
+			text-align: center;
+			font-family: "Times New Roman", Times, serif !important;
+		}
+
+		.om {
+			font-size: var(--stdFontSize);
+			line-height: 1;
+			margin-bottom: 0;
+			font-weight: 700;
+			font-family: "Times New Roman", Times, serif !important;
+		}
+
+		.jay {
+			font-size: var(--stdFontSize);
+			font-weight: 700;
+			line-height: 1;
+			margin: 0 0 4px;
+			font-family: "Times New Roman", Times, serif !important;
+		}
+
+		.mobiles {
+			position: absolute;
+			right: 0;
+			top: 2mm;
+			text-align: right;
+			font-size: var(--miniFontSize);
+			font-weight: 700;
+			line-height: 1.2;
+			font-weight: 700;
+			font-family: "Times New Roman", Times, serif !important;
+		}
+
+		.brand {
+			font-size: var(--brandFontSize);
+			font-weight: 700;
+			line-height: 0.92;
+			letter-spacing: 0.3px;
+			margin: 0;
+			font-family: "Times New Roman", Times, serif !important;
+		}
+
+		.tagline-wrap {
+			display: inline-block;
+			padding: 2px 14px 3px;
+			border: 3px solid var(--border);
+			border-radius: 24px;
+			margin-top: 2px;
+			max-width: 100%;
+		}
+
+		.tagline {
+			font-size: var(--stdFontSize);
+			font-weight: 700;
+			line-height: 1.0;
+			margin: 0;
+			font-family: "Times New Roman", Times, serif !important;
+		}
+
+		.address {
+			font-size: var(--miniFontSize);
+			font-weight: 700;
+			margin-top: 4px;
+			line-height: 1.15;
+			font-family: "Times New Roman", Times, serif !important;
+		}
+
+		.gstin {
+			font-size: var(--stdFontSize);
+			font-weight: 700;
+			line-height: 1;
+			margin-top: 4px;
+			font-family: "Times New Roman", Times, serif !important;
+		}
+
+		.invoice-title {
+			margin-top: 4px;
+			border: 2px solid var(--border);
+			text-align: center;
+			font-size: var(--titleFontSize);
+			font-weight: 700;
+			padding: 1px 6px;
+			letter-spacing: 0.5px;
+		}
+
+		.meta-table,
+		.customer-table,
+		.items-table,
+		.summary-layout,
+		.left-summary,
+		.tax-summary {
+			width: 100%;
+			border-collapse: collapse;
+			table-layout: fixed;
+			font-family: "Times New Roman", Times, serif !important;
+			/* Arial, Helvetica, sans-serif */
+		}
+
+		.meta-table td,
+		.customer-table td,
+		.items-table th,
+		.items-table td,
+		.summary-layout td,
+		.left-summary td,
+		.tax-summary td {
+			border: 1px solid var(--border);
+			padding: 4px 6px;
+			vertical-align: top;
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */
+		}
+
+		.meta-table td {
+			font-size: var(--miniFontSize);
+			font-weight: 700;
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */
+		}
+
+		.meta-table .label,
+		.customer-table .label,
+		.items-table .label,
+		.summary-layout .label {
+			font-size: var(--stdFontSize);
+			font-weight: 700;
+		}
+
+		.customer-table td {
+			font-size: var(--stdFontSize);
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */
+		}
+
+		.customer-table .client-name {
+			font-size: var(--stdFontSize);
+			font-weight: 700;
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */
+		}
+
+		.customer-table .label {
+			font-size: var(--stdFontSize);
+			font-weight: 700;
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */	}
+
+		.items-table th {
+			font-size: var(--stdFontSize);
+			font-weight: 700;
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */	}
+
+		.items-table td {
+			font-size: var(--stdFontSize);
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */	}
+
+		.summary-layout td {
+			font-size: var(--stdFontSize);
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */	}
+
+		.left-summary td {
+			font-size: var(--stdFontSize);
+			font-weight: 700;
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */	}
+
+		.tax-summary td {
+			font-size: var(--stdFontSize);
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */	
+		}
+
+		.items-table {
+			margin-top: 0;
+		}
+
+		.items-table th {
+			font-size: var(--stdFontSize);
+			text-align: center;
+			font-weight: 700;
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */
+		}
+
+		.items-table td {
+			font-size: var(--stdFontSize);
+			line-height: 1.0;
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */
+			padding-top: 4px;
+			padding-bottom: 4px;
+		}
+
+		.center {
+			text-align: center;
+		}
+
+		.right {
+			text-align: right;
+		}
+
+		.item-name {
+			padding-left: 10px;
+		}
+
+		.qty-cell,
+		.rate-cell,
+		.amount-cell,
+		.hsn-cell {
+			text-align: right;
+		}
+
+		.summary-layout {
+			margin-top: 0;
+		}
+
+		.left-summary td,
+		.tax-summary td {
+			font-size: var(--stdFontSize);
+			font-weight: 700;
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */
+		}
+
+		.summary-label {
+			font-size: var(--stdFontSize);
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */
+		}
+
+		.summary-note {
+			font-size: var(--stdFontSize);
+			font-weight: 700;
+			text-align: center;
+			line-height: 1.15;
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */
+		}
+
+		.amount-right {
+			font-size: var(--stdFontSize);
+			text-align: right;
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */
+		}
+
+		.rate-right {
+			font-size: var(--stdFontSize);
+			text-align: right;
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */
+		}
+
+		.terms-list {
+			padding: 0;
+			margin: 0;
+			list-style: none;
+			font-size: var(--stdFontSize);
+			line-height: 1.5;
+			font-family: "Times New Roman", Times, serif !important;
+			/* font-family: Arial, Helvetica, sans-serif; */
+		}
+
+		.terms-list li::before {
+			content: "✍ ";
+		}
+
+		.terms-cell {
+			padding-top: 4px;
+			padding-bottom: 4px;
+		}
+
+		.footer-left-stack {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			min-height: 100%;
+		}
+
+		.footer-left-spacer {
+			flex: 1 1 auto;
+			min-height: 10px;
+		}
+
+		.footer-left-terms {
+			margin-top: auto;
+		}
+
+		.footer-sign{
+			text-decoration: 1px solid overline;
+			margin-top: 30px;
+			text-align: right;
+			font-size: var(--stdFontSize);
+			font-weight: 700;
+			padding-right: 10px;
+		}
+
+		.bank-footer {
+			margin-top: 2px;
+			font-size: var(--stdFontSize);
+			font-weight: 700;
+			overflow: hidden;
+			/*
+			margin-top: 2px;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0;
+			font-size: 6px;
+			font-weight: 700;
+			white-space: nowrap;
+			width: 100%;
+			padding-left: 3mm;
+			*/
+		}
+
+		.summary-left-title {
+			width: 100%;
+			white-space: nowrap;
+			vertical-align: top;
+		}
+
+		.tax-label {
+			width: 52%;
+		}
+
+		.tax-rate {
+			width: 18%;
+		}
+
+		.tax-amount {
+			width: 30%;
+		}
+
+		.summary-total-label {
+			white-space: nowrap;
+		}
+
+		.summary-words-wrap {
+			white-space: normal;
+			word-break: break-word;
+			line-height: 1.1;
+			text-align: center;
+			font-size: var(--miniFontSize);
+		}
+
+		.qty-total-row td {
+			padding-top: 1px;
+			padding-bottom: 1px;
+		}
+
+		.blank-item-row td {
+			height: 22px;
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+
+		.qty-total-cell {
+			font-size: var(--stdFontSize);
+			font-weight: 700;
+			text-align: right;
+			white-space: nowrap;
+		}
+
+		.bank-footer .bank-item {
+			display: block;
+			width: 100%;
+			white-space: nowrap;
+			line-height: 1;
+			margin: 0;
+			text-align: left;
+			font-size: var(--stdFontSize);
+		}
+
+		.actions {
+			margin-top: 10px;
+			display: flex;
+			gap: 6px;
+			justify-content: center;
+			flex-wrap: nowrap;
+			align-items: center;
+			white-space: nowrap;
+		}
+
+		.actions button,
+		.actions a {
+			display: inline-block;
+			padding: 6px 8px;
+			border-radius: 999px;
+			border: 0;
+			color: #fff;
+			text-decoration: none;
+			font-family: inherit;
+			font-size: var(--miniFontSize);
+			font-weight: 700;
+			line-height: 1.15;
+			cursor: pointer;
+		}
+
+		.btn-blue {
+			background: #69b5cf;
+		}
+
+		.btn-gold {
+			background: #f1b63d;
+		}
+
+		.btn-orange {
+			background: #ea7422;
+		}
+
+		.btn-red {
+			background: #d9534f;
+		}
+
+		.btn-red {
+			background: #f30202;
+		}
+
+		.print-hide {
+			display: inline-block;
+		}
+
+		@page {
+			size: A4 portrait;
+			margin: 4mm 6mm 6mm;
+		}
+
+		@media print {
+			body {
+				padding: 0;
+			}
+
+			.page {
+				max-width: none;
+			}
+
+			.print-hide {
+				display: none !important;
+			}
+
+			.items-table tr,
+			.qty-total-row,
+			.summary-layout tr,
+			.left-summary tr,
+			.tax-summary tr {
+				break-inside: avoid;
+				page-break-inside: avoid;
+			}
+
+			.footer-sign {
+				margin-top: 0;
+			}
+		}
+
+		@media (max-width: 980px) {
+			.brand {
+				font-size: var(--brandFontSize);
+			}
+
+			.tagline {
+				font-size: var(--stdFontSize);
+			}
+
+			.address {
+				font-size: var(--miniFontSize);
+			}
+
+			.gstin {
+				font-size: var(--stdFontSize);
+			}
+
+			.mobiles {
+				font-size: var(--miniFontSize);
+			}
+		}
+	</style>
+</head>
+<body{% if auto_print %} onload="window.print();" {% endif %}>
+	<div class="page">
+		{% for page in invoice_pages %}
+		<div class="invoice-page">
+		<div class="header" style="font-family:'Times New Roman', Times, serif !important;">
+			<div class="om">ॐ</div>
+			<div class="jay">Jay Mata Di</div>
+			<div class="mobiles">
+				{% for number in firm_contact_numbers %}
+				<div>M:{{ number }}</div>
+				{% endfor %}
+			</div>
+			<h1 class="brand">{{ firm.firm_name|default:"Gurukrupa Enterprise" }}</h1>
+			<div class="tagline-wrap">
+				<div class="tagline">Wholesale Exclusive Designer Shirts, Bablas &amp; Cloth Merchants</div>
+			</div>
+			<div class="address">{{ firm.full_address|default_if_none:"" }}</div>
+			<div class="gstin">GSTIN : {{ firm.gstin }}</div>
+		</div>
+
+		<div class="invoice-title">TAX INVOICE</div>
+
+		<table class="meta-table">
+			<tr>
+				<td style="width:50%;"><span class="label">Invoice No :</span> {{ invoice.display_invoice_number }}</td>
+				<td style="width:50%;"><span class="label">Invoice Date :</span> {{ invoice.printable_date }}</td>
+			</tr>
+		</table>
+
+		<table class="customer-table">
+			<tr>
+				<td style="width:50%;">
+					<div class="label client-name">To, {{ invoice.client.name|upper }}</div>
+					<div>{{ invoice.client.address|default:"-" }}</div>
+				</td>
+				<td style="width:50%;">
+					<div><span class="label">Date of Supply :</span> {{ invoice.printable_date_of_supply }}</div>
+					<div><span class="label">Place of Supply :</span> {{ invoice.place_of_supply|default:"-" }}</div>
+					<div><span class="label">Transport Mode :</span> {{ invoice.transport_mode|default:"-" }}</div>
+				</td>
+			</tr>
+			<tr>
+				<td><span class="label">Mobile :</span> {{ invoice.client.mobile|default:"-" }}</td>
+				<td><span class="label">Vehicle Number :</span> {{ invoice.vehicle_number|default:"-" }}</td>
+			</tr>
+			<tr>
+				<td><span class="label">GSTIN :</span> {{ invoice.client.gstin|default:"-" }}</td>
+				<td><span class="label">Agent :</span> {{ invoice.agent|default:"-" }}</td>
+			</tr>
+			<tr>
+				<td>
+					<span class="label">State :</span> {{ invoice.client.state|default:"-" }}
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<span class="label">Code :</span> {{ invoice.client.state_code|default:"-" }}
+				</td>
+				<td><span class="label">Agent Mobile :</span> {{ invoice.agent.mobile|default:"-" }}</td>
+			</tr>
+		</table>
+
+		<table class="items-table">
+			<thead>
+				<tr>
+					<th style="width:5%;">Sr No.</th>
+					<th style="width:33%;">Item Number</th>
+					<th style="width:12%;">Size</th>
+					<th style="width:12%;">HSN Code</th>
+					<th style="width:12%;">Qty.</th>
+					<th style="width:12%;">Rate</th>
+					<th style="width:14%;">Amount</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in page.rows %}
+				<tr>
+					<td class="center">{{ row.serial }}</td>
+					<td class="item-name">{{ row.item.product.name }}</td>
+					<td class="center">{{ row.item.size }}</td>
+					<td class="hsn-cell">{{ row.item.product.hsn_code|default:"6205" }}</td>
+					<td class="qty-cell">{{ row.item.qty }} Pcs</td>
+					<td class="rate-cell">{{ row.item.rate }}</td>
+					<td class="amount-cell">{{ row.item.amount }}</td>
+				</tr>
+				{% endfor %}
+				{% for _ in page.blank_rows %}
+				<tr class="blank-item-row">
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+				</tr>
+				{% endfor %}
+				{% if page.is_last %}
+				<tr class="qty-total-row">
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+					<td class="qty-total-cell">{{ invoice.qty_total }} Pcs</td>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+				</tr>
+				{% endif %}
+			</tbody>
+		</table>
+
+		{% if page.show_continued %}
+		<div class="continued-note">Continued on next page</div>
+		{% endif %}
+
+		{% if page.is_last %}
+		<table class="summary-layout">
+			<tr>
+				<td style="width:60%; vertical-align:top;">
+					<div class="footer-left-stack">
+						<div class="footer-left-spacer"></div>
+						<table class="left-summary footer-left-terms">
+							<tr>
+								<td colspan="3" class="terms-cell">
+									<ul class="terms-list">
+										{% for term in invoice_terms_lines %}
+										<li>{{ term }}</li>
+										{% endfor %}
+									</ul>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+				<td style="width:40%; vertical-align:top;">
+					<table class="tax-summary">
+						<tr>
+							<td class="summary-label tax-label summary-total-label" colspan="2">Amount Before Tax</td>
+							<td class="amount-right tax-amount"
+								>{{ invoice.total_before_tax }}</td>
+						</tr>
+						{% if invoice.is_taxable %}
+						<tr>
+							<td colspan="2" class="summary-label tax-label">Add. SGST:
+								{{ invoice.sgst }}%</td>
+							<td class="amount-right tax-amount">{{ invoice.sgst_value }}</td>
+						</tr>
+						<tr>
+							<td class="summary-label tax-label" colspan="2">Add. CGST: {{ invoice.cgst }}%</td>
+							<td class="amount-right tax-amount">{{ invoice.cgst_value }}</td>
+						</tr>
+						<tr>
+							<td class="summary-label tax-label" colspan="2">Add. IGST: {{ invoice.igst }}%</td>
+							<td class="amount-right tax-amount">{{ invoice.igst_value }}</td>
+						</tr>
+						{% else %}
+						<tr>
+							<td class="summary-label tax-label">Tax</td>
+							<td class="rate-right tax-rate">0.00%</td>
+							<td class="amount-right tax-amount">0.00</td>
+						</tr>
+						<tr>
+							<td class="summary-label tax-label">Tax</td>
+							<td class="rate-right tax-rate">0.00%</td>
+							<td class="amount-right tax-amount">0.00</td>
+						</tr>
+						<tr>
+							<td class="summary-label tax-label">Tax</td>
+							<td class="rate-right tax-rate">0.00%</td>
+							<td class="amount-right tax-amount">0.00</td>
+						</tr>
+						{% endif %}
+						<tr>
+							<td class="summary-label tax-label summary-total-label" colspan="2"
+								>Total Tax Amount</td>
+							<td class="amount-right tax-amount">{{ invoice.total_tax }}</td>
+						</tr>
+						<tr>
+							<td class="summary-label tax-label summary-total-label" colspan="2"
+								>Total Bill Amount</td>
+							<td class="amount-right tax-amount"
+								>{{ invoice.total_after_tax }}</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3" class="summary-words-wrap"
+					style="text-align:right; font-size:11px; line-height:1.15; padding-top:4px;font-weight: bold; text-transform: uppercase;">
+					{{ invoice.total_after_tax_words }}
+				</td>
+			</tr>
+		</table>
+
+		<div class="footer-sign">For {{ firm.firm_name }}</div>
+
+		<div class="bank-footer">
+			<div class="bank-item">● {{ firm.bank_name|default:"PNB" }}: A/c. No. {{ firm.account_number }}</div>
+			<div class="bank-item">● RTGS CODE: {{ firm.rtgs_code }}</div>
+			{% if firm.upi_id %}
+			<div class="bank-item">● UPI ID: {{ firm.upi_id }}</div>
+			{% endif %}
+		</div>
+		{% endif %}
+		</div>
+		{% endfor %}
+
+		{% if not auto_print %}
+		<div class="actions print-hide">
+			<button type="button" class="btn-blue" onclick="window.location='/'; return false;">Dashboard</button>
+			<button type="button" class="btn-blue" onclick="window.print(); return false;">Print</button>
+			<a href="/payments/new" class="btn-gold">Add Payment</a>
+			<a href="/invoices/{{ invoice.id }}/edit" class="btn-orange">Edit</a>
+			<form method="post" action="/invoices/{{ invoice.id }}/delete" style="display:inline;"
+				onsubmit="return confirm('This will permanently hide the invoice from active lists and roll back the client balance. Continue?');">
+				{% csrf_token %}
+				<button type="submit" class="btn-red">Delete</button>
+			</form>
+			<a href="/clients/{{ invoice.client.id }}" class="btn-blue">Client Ledger</a>
+		</div>
+		{% endif %}
+	</div>
+	</body>
+
+</html>

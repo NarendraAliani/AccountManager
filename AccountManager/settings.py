@@ -4,7 +4,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '^p4_74o%ecr4z=_yc086n_rk4knv0my3je35ia&9*dp!r(+^i3'
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost' , '127.0.0.1']
+ALLOWED_HOSTS = ['localhost' , '127.0.0.1' , 'testserver']
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -13,7 +13,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Software',
+    'Software.apps.SoftwareConfig',
 )
 
 MIDDLEWARE = [
@@ -39,6 +39,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'Software.context_processors.firm_settings',
             ],
         },
     },
@@ -56,10 +57,15 @@ DATABASES = {
 
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 USE_TZ = True
 
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = ( os.path.join(BASE_DIR, "static"), )
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'

@@ -49,6 +49,14 @@
 - The invoice detail page includes a dedicated print layout.
 - The print view is split into pages when item counts exceed the per-page limit.
 
+### Maintenance and backup
+
+- The app includes a maintenance screen at `/maintenance/`.
+- You can download a full ZIP backup of the SQLite database and media files.
+- You can restore from a previously downloaded ZIP backup.
+- You can also truncate all company data from the maintenance page after a strong confirmation prompt.
+- `launch_local.bat` starts the local server and opens the browser for single-click use on office PCs.
+
 ## Tech Stack
 
 - **Backend:** Django
@@ -65,24 +73,31 @@
 
 ## Setup
 
+See the full setup guide in [SETUP.md](SETUP.md).
+If you are moving the app to a new machine, follow [NEW_PC_SETUP.md](NEW_PC_SETUP.md) for the exact copy/install/start steps, or print [NEW_PC_CHECKLIST.md](NEW_PC_CHECKLIST.md) for an office-friendly step list.
+
+For a true one-click first-time install on a new PC, double-click [Start Setup.bat](Start%20Setup.bat).
+
+Quick start:
+
 1. Create and activate a virtual environment.
-2. Install Django:
+2. Install the project dependencies:
    ```bash
    python -m pip install -r requirements.txt
    ```
-3. Run migrations:
+3. Apply database migrations:
    ```bash
    python manage.py migrate
    ```
-4. Create an admin account:
+4. Create a login account if the database is new:
    ```bash
    python manage.py createsuperuser
    ```
-5. Start the app:
+5. Start the local server:
    ```bash
-   python manage.py runserver
+   python manage.py runserver 0.0.0.0:8000
    ```
-6. Open `http://localhost:8000/`.
+6. Open `http://127.0.0.1:8000/` and log in.
 
 ## Notes
 
@@ -111,4 +126,12 @@
 - `/payments/<id>` - payment detail
 - `/payments/<id>/edit` - edit payment
 - `/sizes/` - size master
+- `/reports/` - reporting dashboard and exports
+- `/maintenance/` - backup and restore screen
 - `/admin/` - Django admin
+
+
+## Users
+
+- username: admin
+- password: admin1234

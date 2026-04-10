@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
 {% block title %}
-<div class="navbar-header"> <h2>&nbsp;Sizes </h2></div>
+<h2>Sizes</h2>
+{% endblock %}
+
+{% block page_actions %}
+<a href="/sizes/" class="btn btn-default btn-fill btn-sm">Refresh</a>
 {% endblock %}
 
 {% block body%}
@@ -9,9 +13,11 @@
 <div class="col-md-11">
 <div class="card">
 <form method="POST">{% csrf_token %}
-<div class="col-md-2"><h4>New Size</h4></div>
-<div class="col-md-8">{{form.name}}</div>
-<div class="col-md-2"><button type="submit" class="btn btn-info btn-fill btn-wd">Save</button></div>
+<div class="row" style="padding:16px 10px 10px 10px;">
+	<div class="col-md-2"><h4 style="margin-top:8px;">New Size</h4></div>
+	<div class="col-md-8">{{form.name}}</div>
+	<div class="col-md-2 text-right"><button type="submit" class="btn btn-info btn-fill btn-wd">Save</button></div>
+</div>
 </form>
 </div>
 </div>
@@ -25,14 +31,27 @@
     <thead>
         <th width="10%">ID</th>
     	<th width="70%" style="text-align:center">Size</th>
-        <th width="20"></th>    
+        {% if firm.show_size_delete_button %}
+        <th width="20"></th>
+        {% endif %}    
     </thead>
     <tbody>
     {% for size in sizes%}
         <tr>
         	<td>{{forloop.counter}}</td>
         	<td style="text-align:center">{{size.name}}</td>
-            <td></td>
+            {% if firm.show_size_delete_button %}
+            <td>
+                <div class="row-actions">
+                    <form method="post" action="/sizes/{{size.id}}/delete" onsubmit="return confirm('Delete this size? If it is already used in invoice items, the system will block the deletion. Continue?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link btn-xs" style="color:#d9534f;padding:0 0 0 8px;" title="Delete size">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </td>
+            {% endif %}
         </tr>
     {% endfor %}
     </tbody>

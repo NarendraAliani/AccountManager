@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{ firm.firm_name|default:"Gurukrupa Enterprise" }} - Login</title>
+	<link href="/static/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="/static/css/font-awesome.min.css" rel="stylesheet"/>
+	<style>
+		:root {
+			--bg-1: #0f172a;
+			--bg-2: #0b7285;
+			--panel: rgba(255,255,255,0.12);
+			--panel-border: rgba(255,255,255,0.18);
+			--text: #eef6ff;
+			--muted: rgba(238,246,255,0.76);
+			--accent: #ff8a3d;
+		}
+		* { box-sizing: border-box; }
+		body {
+			margin: 0;
+			min-height: 100vh;
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+			color: var(--text);
+			background:
+				radial-gradient(circle at top left, rgba(255,255,255,0.13), transparent 35%),
+				linear-gradient(135deg, var(--bg-1), var(--bg-2));
+		}
+		.login-shell {
+			min-height: 100vh;
+			display: grid;
+			grid-template-columns: 1.1fr 0.9fr;
+		}
+		.brand-panel, .form-panel {
+			padding: 40px;
+		}
+		.brand-panel {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			gap: 24px;
+		}
+		.brand-card {
+			max-width: 620px;
+		}
+		.logo {
+			max-width: 88px;
+			max-height: 88px;
+			margin-bottom: 16px;
+			filter: drop-shadow(0 10px 30px rgba(0,0,0,0.25));
+		}
+		.brand-title {
+			font-size: clamp(2rem, 4vw, 3.6rem);
+			line-height: 1;
+			margin: 0 0 12px;
+			font-weight: 700;
+			letter-spacing: 0.2px;
+		}
+		.brand-subtitle {
+			color: var(--muted);
+			font-size: 1.15rem;
+			line-height: 1.8;
+			margin: 0 0 18px;
+			max-width: 560px;
+		}
+		.feature-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 14px;
+			margin-top: 18px;
+			max-width: 620px;
+		}
+		.feature {
+			padding: 16px 18px;
+			border: 1px solid var(--panel-border);
+			background: rgba(255,255,255,0.08);
+			backdrop-filter: blur(12px);
+			border-radius: 16px;
+		}
+		.feature strong {
+			display: block;
+			font-size: 1.02rem;
+			margin-bottom: 6px;
+		}
+		.feature span {
+			color: var(--muted);
+			font-size: 1rem;
+			line-height: 1.55;
+		}
+		.form-wrap {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.form-card {
+			width: 100%;
+			max-width: 460px;
+			padding: 30px;
+			border-radius: 28px;
+			background: rgba(255,255,255,0.96);
+			color: #243041;
+			box-shadow: 0 22px 80px rgba(0,0,0,0.24);
+		}
+		.form-card h2 {
+			margin: 0 0 6px;
+			font-size: 2.25rem;
+			color: #1c2733;
+		}
+		.form-card p {
+			margin: 0 0 18px;
+			color: #617083;
+			line-height: 1.7;
+			font-size: 1.05rem;
+		}
+		.form-card .alert {
+			margin-bottom: 16px;
+		}
+		.form-group label {
+			font-weight: 600;
+			color: #3b4a5c;
+			font-size: 1.05rem;
+		}
+		.form-control {
+			height: 48px;
+			border-radius: 12px;
+			border-color: #d7dee8;
+			box-shadow: none;
+			font-size: 1.02rem;
+		}
+		.form-control:focus {
+			border-color: #0b7285;
+			box-shadow: 0 0 0 3px rgba(11,114,133,0.12);
+		}
+		.login-btn {
+			width: 100%;
+			height: 50px;
+			border: 0;
+			border-radius: 14px;
+			background: linear-gradient(135deg, #0b7285, #0ea5a8);
+			color: #fff;
+			font-weight: 700;
+			font-size: 1.08rem;
+			margin-top: 6px;
+		}
+		.login-btn:hover {
+			filter: brightness(1.03);
+		}
+		.meta-row {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px 18px;
+			margin-top: 18px;
+			color: var(--muted);
+			font-size: 1.03rem;
+		}
+		.meta-row span {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+		}
+		.footer-note {
+			margin-top: 22px;
+			color: rgba(36,48,65,0.74);
+			font-size: 0.98rem;
+			line-height: 1.7;
+		}
+		@media (max-width: 992px) {
+			.login-shell {
+				grid-template-columns: 1fr;
+			}
+			.brand-panel {
+				padding-bottom: 0;
+			}
+			.form-panel {
+				padding-top: 0;
+			}
+		}
+		@media (max-width: 576px) {
+			.brand-panel, .form-panel {
+				padding: 22px;
+			}
+			.feature-grid {
+				grid-template-columns: 1fr;
+			}
+			.form-card {
+				padding: 22px;
+				border-radius: 22px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="login-shell">
+		<div class="brand-panel">
+			<div class="brand-card">
+				<img class="logo" src="{{ firm.logo_url }}" alt="{{ firm.firm_name }}">
+				<h1 class="brand-title">{{ firm.firm_name|default:"Gurukrupa Enterprise" }}</h1>
+				<p class="brand-subtitle">
+					Billing, invoicing, client tracking, payments, and reports in one local office system.
+					Sign in to continue managing invoices, collections, and ledgers from a single dashboard.
+				</p>
+				<div class="feature-grid">
+					<div class="feature">
+						<strong>Secure local access</strong>
+						<span>Designed for office-only use with controlled login access.</span>
+					</div>
+					<div class="feature">
+						<strong>Fast billing flow</strong>
+						<span>Create invoices, add payments, and manage clients quickly.</span>
+					</div>
+					<div class="feature">
+						<strong>Business branding</strong>
+						<span>Uses your firm logo, address, GSTIN, and contact details.</span>
+					</div>
+					<div class="feature">
+						<strong>Backup ready</strong>
+						<span>Built around local backups, restore, and maintenance tools.</span>
+					</div>
+				</div>
+			</div>
+			<div class="meta-row">
+				{% if firm.full_address %}<span><i class="fa fa-map-marker"></i> {{ firm.full_address }}</span>{% endif %}
+				{% if firm.contact_number %}<span><i class="fa fa-phone"></i> {{ firm.contact_number }}</span>{% endif %}
+				{% if firm.email %}<span><i class="fa fa-envelope"></i> {{ firm.email }}</span>{% endif %}
+				{% if firm.gstin %}<span><i class="fa fa-file-text-o"></i> GSTIN: {{ firm.gstin }}</span>{% endif %}
+			</div>
+		</div>
+
+		<div class="form-panel">
+			<div class="form-wrap">
+				<div class="form-card">
+					<h2>Sign In</h2>
+					<p>Enter your credentials to open the billing dashboard.</p>
+					{% if form.errors %}
+						<div class="alert alert-danger">
+							Your username or password is incorrect. Please try again.
+						</div>
+					{% endif %}
+					<form method="post">
+						{% csrf_token %}
+						{% if next %}
+							<input type="hidden" name="next" value="{{ next }}">
+						{% endif %}
+						<div class="form-group">
+							<label for="id_username">Username</label>
+							<input type="text" name="username" autofocus required id="id_username" class="form-control" placeholder="Enter username">
+						</div>
+						<div class="form-group">
+							<label for="id_password">Password</label>
+							<input type="password" name="password" required id="id_password" class="form-control" placeholder="Enter password">
+						</div>
+						<button type="submit" class="login-btn">Login to Dashboard</button>
+					</form>
+					<div class="footer-note">
+						Use your office account to access invoices, payments, clients, and reports.
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

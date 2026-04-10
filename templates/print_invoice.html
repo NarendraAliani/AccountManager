@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{ firm.firm_name|default:"Gurukrupa Enterprise" }} - {{ invoice.display_invoice_number }}</title>
+	<style>
+		body {
+			font-family: Arial, Helvetica, sans-serif;
+			color: #111;
+			margin: 0;
+			padding: 18px;
+		}
+		.invoice-shell {
+			max-width: 1100px;
+			margin: 0 auto;
+		}
+		.topbar {
+			display: flex;
+			align-items: flex-start;
+			justify-content: space-between;
+			gap: 18px;
+			border-bottom: 2px solid #222;
+			padding-bottom: 12px;
+			margin-bottom: 14px;
+		}
+		.brand {
+			max-width: 70%;
+		}
+		.brand h1, .brand h2, .brand p {
+			margin: 0;
+			line-height: 1.4;
+		}
+		.brand h1 {
+			font-size: 28px;
+		}
+		.meta {
+			text-align: right;
+			min-width: 240px;
+			font-size: 14px;
+			line-height: 1.6;
+		}
+		.customer, .summary, .terms {
+			margin-top: 14px;
+		}
+		.customer-grid {
+			display: grid;
+			grid-template-columns: 1.4fr 1fr;
+			gap: 12px;
+		}
+		.box {
+			border: 1px solid #444;
+			padding: 10px 12px;
+		}
+		.box h3 {
+			margin: 0 0 6px 0;
+			font-size: 16px;
+		}
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+		th, td {
+			border: 1px solid #444;
+			padding: 8px 6px;
+			font-size: 14px;
+			vertical-align: top;
+		}
+		th {
+			background: #f3f3f3;
+			text-align: left;
+		}
+		.right {
+			text-align: right;
+		}
+		.center {
+			text-align: center;
+		}
+		.total-row td {
+			font-weight: bold;
+		}
+		.terms-block {
+			margin-top: 16px;
+		}
+		.terms-block .box {
+			width: 100%;
+			box-sizing: border-box;
+			display: block;
+			border: 1px solid #444;
+			border-right: 1px solid #444;
+			border-left: 1px solid #444;
+			overflow: hidden;
+		}
+		.footer {
+			margin-top: 20px;
+			border-top: 1px solid #222;
+			padding-top: 10px;
+			font-size: 13px;
+			display: flex;
+			justify-content: space-between;
+			gap: 16px;
+		}
+		.btn-row {
+			margin: 10px 0 18px;
+			display: flex;
+			gap: 10px;
+			justify-content: flex-end;
+			flex-wrap: wrap;
+		}
+		button {
+			border: 0;
+			background: #0f75bc;
+			color: #fff;
+			padding: 10px 14px;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+		@media print {
+			.btn-row { display: none; }
+			body { padding: 0; }
+			.invoice-shell { max-width: none; }
+			.terms-block .box {
+				break-inside: avoid;
+				page-break-inside: avoid;
+			}
+		}
+	</style>
+</head>
+<body onload="window.print();">
+	<div class="invoice-shell">
+		<div class="btn-row">
+			<button onclick="window.location='/' ; return false;">Back to Dashboard</button>
+			<button onclick="window.print();return false;">Print</button>
+			<button onclick="window.close();return false;">Close</button>
+		</div>
+
+		<div class="topbar">
+			<div class="brand">
+				<img src="{{ firm.logo_url }}" alt="{{ firm.firm_name }}" style="max-height:70px;max-width:220px;margin-bottom:8px;">
+				<h1>{{ firm.firm_name|default:"Gurukrupa Enterprise" }}</h1>
+				<p>{{ firm.full_address|default_if_none:"" }}</p>
+				{% if firm.contact_number %}<p>Contact: {{ firm.contact_number }}{% if firm.alternate_contact_number %}, {{ firm.alternate_contact_number }}{% endif %}</p>{% endif %}
+				{% if firm.email %}<p>Email: {{ firm.email }}</p>{% endif %}
+				{% if firm.gstin %}<p>GSTIN: {{ firm.gstin }}</p>{% endif %}
+			</div>
+			<div class="meta">
+				<div><strong>Invoice No:</strong> {{ invoice.display_invoice_number }}</div>
+				<div><strong>Date:</strong> {{ invoice.printable_date }}</div>
+				<div><strong>Supply Date:</strong> {{ invoice.printable_date_of_supply }}</div>
+				<div><strong>Status:</strong> {% if invoice.is_cleared %}Cleared{% else %}Pending{% endif %}</div>
+			</div>
+		</div>
+
+		<div class="customer">
+			<div class="customer-grid">
+				<div class="box">
+					<h3>Bill To</h3>
+					<div><strong>{{ invoice.client.name }}</strong></div>
+					<div>{{ invoice.client.address|default:"-" }}</div>
+					<div>{{ invoice.client.state|default:"-" }}</div>
+					<div>Mobile: {{ invoice.client.mobile|default:"-" }}</div>
+					<div>GSTIN: {{ invoice.client.gstin|default:"-" }}</div>
+					<div>State: {{ invoice.client.state_code|default:"-" }}</div>
+				</div>
+				<div class="box">
+					<h3>Shipment</h3>
+					<div><strong>Place of Supply:</strong> {{ invoice.place_of_supply|default:"-" }}</div>
+					<div><strong>Transport Mode:</strong> {{ invoice.transport_mode|default:"-" }}</div>
+					<div><strong>Vehicle Number:</strong> {{ invoice.vehicle_number|default:"-" }}</div>
+					<div><strong>Agent:</strong> {{ invoice.agent|default:"-" }}</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="summary">
+			<table>
+				<thead>
+					<tr>
+						<th class="center" style="width:6%;">#</th>
+						<th>Product</th>
+						<th style="width:12%;">Size</th>
+						<th class="right" style="width:10%;">Qty</th>
+						<th class="right" style="width:14%;">Rate</th>
+						<th class="right" style="width:16%;">Amount</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for item in invoice.item_set.all %}
+					<tr>
+						<td class="center">{{ forloop.counter }}</td>
+						<td>{{ item.product.name }}</td>
+						<td>{{ item.size }}</td>
+						<td class="right">{{ item.qty }}</td>
+						<td class="right">{{ item.rate }}</td>
+						<td class="right">{{ item.amount }}</td>
+					</tr>
+					{% endfor %}
+					<tr class="total-row">
+						<td colspan="3">Total Quantity</td>
+						<td class="right">{{ invoice.qty_total }}</td>
+						<td class="right">Sub Total</td>
+						<td class="right">{{ invoice.total_before_tax }}</td>
+					</tr>
+					{% if invoice.discount > 0 %}
+					<tr>
+						<td colspan="5" class="right">Discount @ {{ invoice.discount }}%</td>
+						<td class="right">{{ invoice.discount_value }}</td>
+					</tr>
+					{% endif %}
+					{% if invoice.is_taxable %}
+					<tr>
+						<td colspan="5" class="right">CGST {{ invoice.cgst }}%</td>
+						<td class="right">{{ invoice.cgst_value }}</td>
+					</tr>
+					<tr>
+						<td colspan="5" class="right">SGST {{ invoice.sgst }}%</td>
+						<td class="right">{{ invoice.sgst_value }}</td>
+					</tr>
+					<tr>
+						<td colspan="5" class="right">IGST {{ invoice.igst }}%</td>
+						<td class="right">{{ invoice.igst_value }}</td>
+					</tr>
+					<tr class="total-row">
+						<td colspan="5" class="right">Grand Total</td>
+						<td class="right">{{ invoice.total_after_tax }}</td>
+					</tr>
+					<tr>
+						<td colspan="6">
+							<strong>Amount in Words:</strong> {{ invoice.total_after_tax_words }}
+						</td>
+					</tr>
+					{% else %}
+					<tr class="total-row">
+						<td colspan="5" class="right">Grand Total</td>
+						<td class="right">{{ invoice.total_after_tax }}</td>
+					</tr>
+					<tr>
+						<td colspan="6">
+							<strong>Amount in Words:</strong> {{ invoice.total_after_tax_words }}
+						</td>
+					</tr>
+					{% endif %}
+				</tbody>
+			</table>
+		</div>
+
+		{% if firm.invoice_terms or firm.invoice_footer %}
+		<div class="terms-block">
+			<div class="box">
+				<h3>Terms &amp; Conditions</h3>
+				<div>{{ firm.invoice_terms|default:firm.invoice_footer|linebreaksbr }}</div>
+			</div>
+		</div>
+		{% endif %}
+
+		<div class="footer">
+			<div>
+				{% if firm.bank_name or firm.account_number or firm.ifsc_code or firm.upi_id %}
+					<div><strong>Bank:</strong> {{ firm.bank_name|default:"-" }}</div>
+					<div><strong>Account Name:</strong> {{ firm.account_name|default:"-" }}</div>
+					<div><strong>Account No:</strong> {{ firm.account_number|default:"-" }}</div>
+					<div><strong>IFSC:</strong> {{ firm.ifsc_code|default:"-" }}</div>
+					<div><strong>UPI:</strong> {{ firm.upi_id|default:"-" }}</div>
+				{% endif %}
+			</div>
+			<div style="text-align:right;min-width:220px;">
+				<div style="margin-top:60px;border-top:1px solid #222;padding-top:6px;">Authorised Signatory</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -6,10 +6,11 @@
 
 
 {% block title %}
-<div class="navbar-header"> <h2>&nbsp;Agents </h2></div>
-<div class="nav navbar-nav navbar-right col-md-3">
-	<a href="/agents/new"><button type="submit" class="btn btn-info btn-fill btn-wd">New Agent</button></a>
-</div>
+<h2>Agents</h2>
+{% endblock %}
+
+{% block page_actions %}
+<a href="/agents/new" class="btn btn-info btn-fill btn-sm">New Agent</a>
 {% endblock %}
 
 {% block body%}
@@ -30,8 +31,20 @@
         <tr>
         	<td>{{agent.name|title}}</td>
         	<td>{{agent.mobile}}</td>
-            <td>{{agent.bill_set.count}}</td>
-            <td><a href="/agents/{{agent.id}}"><i class="fa fa-chevron-circle-right fa-2x"></i></a></td>
+            <td>{{agent.active_bill_count}}</td>
+            <td>
+                <div class="row-actions">
+                    <a href="/agents/{{agent.id}}" title="Open agent"><i class="fa fa-chevron-circle-right fa-2x"></i></a>
+                    {% if firm.show_agent_delete_button %}
+                    <form method="post" action="/agents/{{agent.id}}/delete" onsubmit="return confirm('Delete this agent? This will not remove invoice history, but linked invoices will no longer show an agent name. Continue?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link btn-xs" style="color:#d9534f;padding:0 0 0 8px;" title="Delete agent">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </td>
             <td>{{agent.id}}</td>
         </tr>
     {% endfor %}
@@ -71,10 +84,6 @@ $(document).ready(function(){
 });
 </script>
 {% endblock %}
-
-
-
-
 
 
 

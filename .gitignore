@@ -4,3 +4,8 @@ chrome.lnk
 desktop.ini
 __pycache__/
 *.pyc
+.venv/
+setup.done
+setup.log
+server.log
+server.err.log

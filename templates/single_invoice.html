@@ -1,34 +1,35 @@
 {% extends "base.html" %}
 
-{% block head%}
+{% block head %}
 <style>
 card-blue {background-color:lightskyblue;}
 tfoot tr td {border: 0px!important;}
 .imp {border:2px solid black!important;}
 h1,h2,h3,h4,h5,h6 { margin:5px 10px; }
 </style>
-{% endblock%}
+{% endblock %}
+
 {% block title %}
-<div class="navbar-header"> <h2>{%if invoice.is_taxable%}{%else%}Non-{%endif%}Taxable Invoice </h2></div>
+<h2>Invoice</h2>
 {% endblock %}
 
 {% block body %}
 <div class="row">
 <div class="col-md-12">
 <section>
-<div class="card {%if invoice.is_cleared%}card-blue{%endif%}">  
+<div class="card {% if invoice.is_cleared %}card-blue{% endif %}">  
     <div class="content">
         <div class="row">
-            <div class="col-md-4"><h3><span class="title">Invoice No : </span>{{invoice.invoice_number}}</h3>       </div>
+            <div class="col-md-4"><h3><span class="title">Invoice No : </span>{{invoice.display_invoice_number}}</h3></div>
             <div class="col-md-4"></div>
-            <div class="col-md-4"><h3><span class="title">Date : </span>{{invoice.invoice_date}}</h3>        </div>
+            <div class="col-md-4"><h3><span class="title">Date : </span>{{invoice.printable_date}}</h3></div>
         </div>
         <div class="row">
             <div class="col-md-6"><h2>{{invoice.client.name}}</h2></div>
         </div>
         <div class="row">
             <div class="col-md-7"><h5 class="title">&nbsp;&nbsp;&nbsp;{{invoice.client.address|title}}</h5></div>
-            <div class="col-md-4 col-md-offset-1"><h5>Date of Supply  : {{invoice.date_of_supply}}</h5></div>
+            <div class="col-md-4 col-md-offset-1"><h5>Date of Supply : {{invoice.printable_date_of_supply}}</h5></div>
         </div>
         <div class="row">
             <div class="col-md-4">
@@ -38,19 +39,18 @@ h1,h2,h3,h4,h5,h6 { margin:5px 10px; }
                 <h5><span class="title">Agent : </span>{{invoice.agent}}</h5>
             </div>
             <div class="col-md-4 pull-right">
-                
                 <h5><span class="title">Place of Supply : </span>{{invoice.place_of_supply}}</h5>
                 <h5><span class="title">Transport Mode : </span>{{invoice.transport_mode}}</h5>
                 <h5><span class="title">Vehicle Number : </span>{{invoice.vehicle_number}}</h5>
-                {%if invoice.is_cleared %}
+                {% if invoice.is_cleared %}
                 <h3 class="text-info"><span class="title">Status : </span>CLEARED
                     <i class="fa fa-check-square-o ajaxbutton" data-href="/api/invoices/{{invoice.id}}"></i>
                 </h3>
-                {%else%}
+                {% else %}
                 <h3 class="text-danger"><span class="title">Status : </span>PENDING
                     <i class="fa fa-square-o ajaxbutton" data-href="/api/invoices/{{invoice.id}}"></i>
                 </h3>
-                {%endif%}
+                {% endif %}
             </div>
         </div>            
     </div>
@@ -75,7 +75,7 @@ h1,h2,h3,h4,h5,h6 { margin:5px 10px; }
                 {% for item in invoice.item_set.all %}
                 <tr>
                     <td>{{forloop.counter}}</td>
-                    <td>{{item.product}}</td>
+                    <td>{{item.product.name}}</td>
                     <td>{{item.size}}</td>
                     <td>{{item.qty}} Pcs</td>
                     <td>{{item.rate}}</td>
@@ -88,7 +88,7 @@ h1,h2,h3,h4,h5,h6 { margin:5px 10px; }
                     <td>QTY TOTAL</td>
                     <td><b>{{invoice.qty_total}} Pcs</b></td>
                     <td></td>
-                {%if invoice.discount > 0 %}
+                {% if invoice.discount > 0 %}
                     <td>{{invoice.before_discount}}</td>
                 </tr>
                 <tr>
@@ -98,47 +98,48 @@ h1,h2,h3,h4,h5,h6 { margin:5px 10px; }
                     <td colspan="2" style="text-align:right">Discount @ <b>{{invoice.discount}}%</b></td>
                     <td>{{invoice.discount_value}}</td>
                 </tr>
-                {%else%}
+                {% else %}
                     <td>{{invoice.total_before_tax}}</td>
                 </tr>
                 {% endif %}
                 <tr class="imp">
-                    <td colspan="4">{{invoice.total_before_tax_words}}</td>
-                    <td class="imp" style="text-align:right;">Total :</td>
+                    <td colspan="4"></td>
+                    <td class="imp" style="text-align:right;">Sub Total :</td>
                     <td style="text-align:right;">{{invoice.total_before_tax}}</td>
                 </tr>
                 </tbody>
                 {% if invoice.is_taxable %}
                 <tfoot>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td></td><td></td><td></td>
                     <td class="imp">CGST</td>
                     <td class="imp" style="text-align:right;">{{invoice.cgst}}%</td>
                     <td class="imp" style="text-align:right;">{{invoice.cgst_value}}</td>
                 </tr>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td></td><td></td><td></td>
                     <td class="imp">SGST</td>
                     <td class="imp" style="text-align:right;">{{invoice.sgst}}%</td>
                     <td class="imp" style="text-align:right;">{{invoice.sgst_value}}</td>
-                    
                 </tr>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td></td><td></td><td></td>
                     <td class="imp">IGST</td>
                     <td class="imp" style="text-align:right;">{{invoice.igst}}%</td>
                     <td class="imp" style="text-align:right;">{{invoice.igst_value}}</td>
                 </tr>
                 <tr class="imp">
                     <td colspan="4">{{invoice.total_after_tax_words}}</td>
-                    <b><td class="imp">Total</td>
-                    <td class="imp" style="text-align:right;">{{invoice.total_after_tax}}</td></b>
+                    <td class="imp">Grand Total</td>
+                    <td class="imp" style="text-align:right;">{{invoice.total_after_tax}}</td>
+                </tr>
+                </tfoot>
+                {% else %}
+                <tfoot>
+                <tr class="imp">
+                    <td colspan="4">{{invoice.total_after_tax_words}}</td>
+                    <td class="imp">Grand Total</td>
+                    <td class="imp" style="text-align:right;">{{invoice.total_after_tax}}</td>
                 </tr>
                 </tfoot>
                 {% endif %}
@@ -147,19 +148,27 @@ h1,h2,h3,h4,h5,h6 { margin:5px 10px; }
         </div>
     </div>    
 </section>
+{% if firm.invoice_terms or firm.invoice_footer %}
 <div class="row">
-<div class="col-md-2 col-md-offset-3">
+    <div class="col-md-12">
+        <div class="card card-plain">
+            <div class="content">
+                <h4 style="margin-top:0;">Terms &amp; Conditions</h4>
+                <div>{{ firm.invoice_terms|default:firm.invoice_footer|linebreaksbr }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="action-bar">
     <button class="btn btn-fill btn-info" onclick="Popup()">Print Invoice</button>
-</div>
-<div class="col-md-2">
-    <a href="/payments/new"><button class="btn btn-fill btn-warning" >Add Payment</button></a>
-</div>
-<div class="col-md-2">
-    <a href="/invoices/{{invoice.id}}/edit"><button class="btn btn-fill btn-warning" >Edit Invoice</button></a>
-</div>
-<div class="col-md-2">
-    <a href="/clients/{{invoice.client.id}}"><button class="btn btn-fill btn-info" >Goto Client Ledger</button></a>
-</div>
+    <a href="/payments/new" class="btn btn-fill btn-warning">Add Payment</a>
+    <a href="/invoices/{{invoice.id}}/edit" class="btn btn-fill btn-warning">Edit Invoice</a>
+    <form method="post" action="/invoices/{{invoice.id}}/delete" style="display:inline;" onsubmit="return confirm('This will permanently hide the invoice from active lists and roll back the client balance. Continue?');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-fill btn-danger">Delete Invoice</button>
+    </form>
+    <a href="/clients/{{invoice.client.id}}" class="btn btn-fill btn-info">Goto Client Ledger</a>
 </div>
 </div>
 </div>
@@ -180,13 +189,9 @@ $('.ajaxbutton').on('click' , function(x) {
     }) 
 });
 function Popup() {
-      var mywindow = window.open('', 'new div', 'height=675,width=1200');
-      mywindow.document.write(`<html> <head> <style> @page{ margin:8mm; } body{ margin:0px; line-height: 1em; font-size:18px;} .page-break{ display:block; page-break-before:always; } *{margin:0px; padding:0px; } div,td{padding:0px 2px;} .dotted * {border-width:0px 1px; border-bottom:1px inset #d3d3d3;} .dark {background: #eee; font-weight: bold;} </style> </head> <body> <p style="position:fixed; right:0; top:0;">M:9724188555</p> <p style="position:fixed; text-align:center; width:100%;top:0;">ॐ<br>Jay Mata Di</p> <p style="position:fixed; right:0; top:20;">M:9558551553</p><p style="position:fixed; right:0; top:40;">M:7263933103</p> <p style="position:fixed; left:400; bottom:0;"><b>⬤ RTGS CODE : PUNB0716700</b></p> <p style="position:fixed; left:80; bottom:0;"><b>⬤ PNB : A/c. No. 9302002100000232</b></p> <section align="center"> <h1 style="font-size:3em;margin:10px;padding-top:50px;">Gurukrupa Enterprise</h1> <h3 style="padding:8px 20px; margin:5px;display:inline-block; border:2px solid black; border-radius:20px">Wholesale Exclusive Designer Shirts, Bablas<br>& Cloth Merchants</h3> <h4 style="padding:3px;">Shop No. B-205, Karnavati Platinum (K9), Gheekanta, Ahmedabad</h4> </section> <section> {%if invoice.is_taxable%} <h3 style="text-align:center; padding:7px; font-style:bold;"> GSTIN : 24ABNPA2250N1ZR</h3> <h4 style="text-align:center; padding:3px; border:2px solid black; font-style:bold;"> TAX INVOICE </h4> {%else%} <h4 style="text-align:center; padding:10px; border:2px solid black; font-style:bold;"> INVOICE </h4> {%endif%} <table style="width: 100%;" border="2px" cellspacing="0px"> <tbody> <tr> <td style="width:50%;"><h3>Invoice No. : {{invoice.invoice_number}}</h3></td> <td style="width:50%;"><h3>Invoice Date : {{invoice.printable_date}}</h3></td> </tr> <tr> <td style="width:50%;" colspan="2"><h4>To, {{invoice.client.name}}</h4></td> </tr> <tr> <td style="width:50%; vertical-align:top" rowspan="3">&nbsp;{{invoice.client.address}}</td> <td style="width:50%;">Date of Supply : &nbsp;&nbsp;{{invoice.printable_date_of_supply}}</td> </tr> <tr> <td style="width:50%;">Place of Supply : &nbsp;&nbsp;{{invoice.place_of_supply}}</td> </tr> <tr> <td style="width:50%;">Transport Mode : &nbsp;&nbsp;{{invoice.transport_mode}} </td> </tr> <tr> <td style="width:50%;">Mobile : &nbsp;&nbsp;{{invoice.client.mobile}}</td> <td style="width:50%;">Vehicle Number : &nbsp;&nbsp;{{invoice.vehicle_number}}</td> </tr> <tr> {% if invoice.is_taxable%} <td style="width:50%;">GSTIN : {{invoice.client.gstin}} </td> {% else %} <td style="width:50%;">-</td> {% endif %} <td style="width:50%;">Agent : {{invoice.agent}} </td> </tr> <tr> <td style="width:50%;"> State : &nbsp;&nbsp;{{invoice.client.state}} <div style="width:20%;border-left: 2px solid black; display: inline-block;float:right;">{{invoice.client.state_code}}</div> <div style="width:20%;border-left: 2px solid black; display: inline-block;float:right;">Code :</div> </td> <td style="width:50%;">Agent Mobile: {{ invoice.agent.mobile }} </td> </tr> </tbody> </table> </section> <section> <table style="width: 100%;" border="1px" cellspacing="0px"> <tr> <th width="5%"> Sr No.</th> <th width="35%" colspan="2">Item Number</th> <th width="12%">Size</th> {% if invoice.is_taxable%} <th width="12%"> HSN Code</th> {%endif%} <th width="12%">Qty.</th> <th width="12%">Rate</th> <th width="12%">Amount</th> </tr> <tbody> {% for item in invoice.item_set.all %} <tr class="dotted"> <td>{{forloop.counter}}</td> <td colspan="2">{{item.product.name}}</td> <td style="text-align:right">{{item.size}}</td> {% if invoice.is_taxable%} <td style="text-align:right">6205 {{item.product.hsn_code}}</td> {% endif%} <td style="text-align:right">{{item.qty}} Pcs</td> <td style="text-align:right">{{item.rate}}</td> <td style="text-align:right">{{item.amount}}</td> </tr> {%if invoice.is_taxable%} {% if forloop.counter > 0 and forloop.counter|divisibleby:16 %} </tbody> </table> </section> <br> <br> <br> <h1 style="text-align:center"> Continued on next page</h1> <div class="page-break"></div> <section align="center"> <h1 style="font-size:3em;margin:10px;padding-top:50px;">Gurukrupa Enterprise</h1> <h3 style="padding:8px 20px; margin:5px;display:inline-block; border:2px solid black; border-radius:20px">Wholesale Exclusive Designer Shirts, Bablas<br>& Cloth Merchants</h3> <h4 style="padding:3px;">Shop No. 104, Karnavati Arcade, Nr. Nagarsheth no vando, Gheekanta, Ahmedabad</h4> </section> <section> {%if invoice.is_taxable%} <h3 style="text-align:center; padding:7px; font-style:bold;"> GSTIN : 24ABNPA2250N1ZR</h3> <h4 style="text-align:center; padding:3px; border:2px solid black; font-style:bold;"> TAX INVOICE </h4> {%else%} <h4 style="text-align:center; padding:10px; border:2px solid black; font-style:bold;"> INVOICE </h4> {%endif%} <table style="width: 100%;" border="2px" cellspacing="0px"> <tbody> <tr> <td style="width:50%;"><h3>Invoice No. : {{invoice.invoice_number}}</h3></td> <td style="width:50%;"><h3>Invoice Date : {{invoice.printable_date}}</h3></td> </tr> <tr> <td style="width:50%;" colspan="2"><h4>To, {{invoice.client.name}}</h4></td> </tr> <tr> <td style="width:50%; vertical-align:top" rowspan="3">&nbsp;{{invoice.client.address}}</td> <td style="width:50%;">Date of Supply : &nbsp;&nbsp;{{invoice.printable_date_of_supply}}</td> </tr> <tr> <td style="width:50%;">Place of Supply : &nbsp;&nbsp;{{invoice.place_of_supply}}</td> </tr> <tr> <td style="width:50%;">Transport Mode : &nbsp;&nbsp;{{invoice.transport_mode}} </td> </tr> <tr> <td style="width:50%;">Mobile : &nbsp;&nbsp;{{invoice.client.mobile}}</td> <td style="width:50%;">Vehicle Number : &nbsp;&nbsp;{{invoice.vehicle_number}}</td> </tr> <tr> {% if invoice.is_taxable%} <td style="width:50%;">GSTIN : {{invoice.client.gstin}} </td> {% else %} <td style="width:50%;">-</td> {% endif %} <td style="width:50%;">Agent : {{invoice.agent}} </td> </tr> <tr> <td style="width:50%;"> State : &nbsp;&nbsp;{{invoice.client.state}} <div style="width:20%;border-left: 2px solid black; display: inline-block;float:right;">{{invoice.client.state_code}}</div> <div style="width:20%;border-left: 2px solid black; display: inline-block;float:right;">Code :</div> </td> <td style="width:50%;">Agent Mobile: {{ invoice.agent.mobile }} </td> </tr> </tbody> </table> </section> <section> <table style="width: 100%;" border="1px" cellspacing="0px"> <tr> <th width="5%"> Sr No.</th> <th width="35%" colspan="2">Item Number</th> <th width="12%">Size</th> {% if invoice.is_taxable%} <th width="12%"> HSN Code</th> {%endif%} <th width="12%">Qty.</th> <th width="12%">Rate</th> <th width="12%">Amount</th> </tr> <tbody> {% endif %} {%else%} {% if forloop.counter > 0 and forloop.counter|divisibleby:20 %} </tbody> </table> </section> <br> <br> <br> <h1 style="text-align:center"> Continued on next page</h1> <div class="page-break"></div> <section align="center"> <h1 style="font-size:3em;margin:10px;padding-top:50px;">Gurukrupa Enterprise</h1> <h3 style="padding:8px 20px; margin:10px;display:inline-block; border:2px solid black; border-radius:20px">Wholesale Exclusive Designer Shirts and Babla<br>&Cloth Merchants</h3> <h4 style="padding:5px;">Shop No. 104, Karnavati Arcade, Nr. Nagarsheth no vando, Gheekanta, Ahmedabad</h4> </section> <section> {%if invoice.is_taxable%} <h3 style="text-align:center; padding:10px; font-style:bold;"> GSTIN : 24ABNPA2250N1ZR</h3> <h4 style="text-align:center; padding:10px; border:2px solid black; font-style:bold;"> TAX INVOICE </h4> {%else%} <h4 style="text-align:center; padding:10px; border:2px solid black; font-style:bold;"> INVOICE </h4> {%endif%} <table style="width: 100%;" border="2px" cellspacing="0px"> <tbody> <tr> <td style="width:50%;"><h3>Invoice No. : {{invoice.invoice_number}}</h3></td> <td style="width:50%;"><h3>Invoice Date : {{invoice.printable_date}}</h3></td> </tr> <tr> <td style="width:50%;" colspan="2"><h4>To, {{invoice.client.name}}</h4></td> </tr> <tr> <td style="width:50%; vertical-align:top" rowspan="3">&nbsp;{{invoice.client.address}}</td> <td style="width:50%;">Date of Supply : &nbsp;&nbsp;{{invoice.printable_date_of_supply}}</td> </tr> <tr> <td style="width:50%;">Place of Supply : &nbsp;&nbsp;{{invoice.place_of_supply}}</td> </tr> <tr> <td style="width:50%;">Transport Mode : &nbsp;&nbsp;{{invoice.transport_mode}} </td> </tr> <tr> <td style="width:50%;">Mobile : &nbsp;&nbsp;{{invoice.client.mobile}}</td> <td style="width:50%;">Vehicle Number : &nbsp;&nbsp;{{invoice.vehicle_number}}</td> </tr> <tr> {% if invoice.is_taxable%} <td style="width:50%;">GSTIN : {{invoice.client.gstin}} </td> {% else %} <td style="width:50%;">-</td> {% endif %} <td style="width:50%;">Agent : {{invoice.agent}} </td> </tr> <tr> <td style="width:50%;"> State : &nbsp;&nbsp;{{invoice.client.state}} <div style="width:20%;border-left: 2px solid black; display: inline-block;float:right;">{{invoice.client.state_code}}</div> <div style="width:20%;border-left: 2px solid black; display: inline-block;float:right;">Code :</div> </td> <td style="width:50%;">Agent Mobile: {{ invoice.agent.mobile }} </td> </tr> </tbody> </table> </section> <section> <table style="width: 100%;" border="1px" cellspacing="0px"> <tr> <th width="5%"> Sr No.</th> <th width="35%" colspan="2">Item Number</th> <th width="12%">Size</th> {% if invoice.is_taxable%} <th width="12%"> HSN Code</th> {%endif%} <th width="12%">Qty.</th> <th width="12%">Rate</th> <th width="12%">Amount</th> </tr> <tbody> {% endif %} {% endif %} {% endfor%} {% for i in blank %} <tr class="dotted"> <td>{{i}}</td> <td colspan="2">&nbsp;</td> <td>&nbsp;</td> {% if invoice.is_taxable%} <td>&nbsp;</td> {% endif%} <td>&nbsp;</td> <td>&nbsp;</td> <td>&nbsp;</td> </tr> {% endfor%} </tbody> <tfoot> <tr> <td></td> <td colspan="2"></td> <td></td> <td></td> <td style="text-align:right; font-style:bold;">{{invoice.qty_total}} Pcs</td> {%if invoice.discount > 0 %} <td style="text-align:right;"><h5>Discount @{{invoice.discount}} % </h5></td> <td style="text-align:right;"><h5>₹{{invoice.discount_value}}</h5></td> {%else%} <td></td> <td></td> {%endif%} </tr> {% if invoice.is_taxable %} <tr> <td colspan="2" style="text-align:center;"><h4>Amount before Tax </h4></td> <td colspan="5" style="text-align:left;"> <h4> {{invoice.total_before_tax_words}}</h4></td> <td style="text-align:right;"><h4>₹ {{invoice.total_before_tax}}</h4></td> </tr> <tr> <td rowspan="3" colspan="5"> <ul> <li>✍ Goods once sold cannot be taken back</li> <li>✍ Subject to Ahmedabad Jurisdiction</li> <li>✍ After due date 24% interest will be charged</li> </ul> </td> <td style="text-align:right">Add. SGST</td> <td style="text-align:right">{{invoice.sgst}} %</td> <td colspan="2" style="text-align:right"> {{invoice.sgst_value}}</td> </tr> <tr> <td style="text-align:right">Add. CGST</td> <td style="text-align:right">{{invoice.cgst}} %</td> <td colspan="2" style="text-align:right"> {{invoice.cgst_value}}</td> </tr> <tr> <td style="text-align:right">Add. IGST</td> <td style="text-align:right">{{invoice.igst}} %</td> <td colspan="2" style="text-align:right"> {{invoice.igst_value}}</td> </tr> <tr> <td colspan="2"><h4>Total Tax Amount</h4></td> <td colspan="4">{{invoice.total_tax_words}}</td> <td colspan="2" style="text-align:right"><h4>₹ {{invoice.total_tax}}</h4></td> </tr> {% endif %} <tr> <td colspan="2"><h4>Total Bill Amount</h4></td> <td colspan="4"><h4>{{invoice.total_after_tax_words}}</h4></td> <td colspan="2" style="text-align:right;"><h4>₹ {{invoice.total_after_tax}}</h4></td> </tr> </tfoot> </table> <div width="100%" style="float:right; border-bottom:1px outset black;"> <h5>For GuruKrupa Enterprise,</h5><br><br><br> </div> </section> </body> </html>`);
-      mywindow.document.close();
-      mywindow.focus();
-      mywindow.print();
-      mywindow.close();
-      return true;
+    var mywindow = window.open('/invoices/{{invoice.id}}/print', 'print_invoice', 'height=700,width=1200');
+    if (mywindow) { mywindow.focus(); }
+    return true;
 }
 </script>
 {% endblock %}

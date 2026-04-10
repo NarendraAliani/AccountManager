@@ -7,7 +7,7 @@ tfoot tr td {border: 0px!important;}
 </style>
 {% endblock%}
 {% block title %}
-<div class="navbar-header"> <h2>Payment </h2></div>
+<h2>Payment</h2>
 {% endblock %}
 
 {% block body %}
@@ -18,7 +18,7 @@ tfoot tr td {border: 0px!important;}
 <div class="card">  
     <div class="content">
         <div class="row">
-            <div class="col-md-10">  <h3>Date : {{payment.payment_date}}</h3> </div>
+            <div class="col-md-10">  <h3>Date : {{payment.printable_date}}</h3> </div>
         </div>
         <div class="row">
             <div class="col-md-10">
@@ -33,11 +33,15 @@ tfoot tr td {border: 0px!important;}
     </div>
 </div>
 </section>
-<div class="col-md-2 col-md-offset-1">
-    <a href="/payments/{{payment.id}}/edit"><button class="btn btn-fill btn-info" >Edit Payment</button></a>
-</div>
-<div class="col-md-2">
-    <a href="/clients/{{payment.client.id}}"><button class="btn btn-fill btn-info">Goto Client Ledger</button></a>
+<div class="action-bar">
+    <a href="/payments/{{payment.id}}/edit" class="btn btn-fill btn-info">Edit Payment</a>
+    {% if firm.show_payment_delete_button %}
+    <form method="post" action="/payments/{{payment.id}}/delete" style="display:inline;" onsubmit="return confirm('This will permanently hide the payment from active lists and roll back the client balance. Continue?');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-fill btn-danger">Delete Payment</button>
+    </form>
+    {% endif %}
+    <a href="/clients/{{payment.client.id}}" class="btn btn-fill btn-info">Goto Client Ledger</a>
 </div>
 </div>
 </div>

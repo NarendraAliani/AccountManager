@@ -169,12 +169,26 @@ This page is both:
 - a master-data entry form for adding new sizes
 - a list of all current sizes
 
+## 11. Backup and Restore
+
+Open `/maintenance/`.
+
+This screen lets you:
+
+- download a full backup ZIP
+- restore from a previously downloaded backup ZIP
+- review the latest local snapshot information
+- truncate all company data after a strong confirmation prompt
+
+For a one-click local launch, use `launch_local.bat` in the project root.
+
 ## Data Flow Summary
 
 - **Invoice created** -> client debit increases
 - **Payment created** -> client debit decreases
 - **Invoice/payment cleared toggle** -> status icon changes without a full form submit
 - **Ledger pages** -> summarize the stored bills and payments
+- **Maintenance page** -> creates and restores full local-office backups
 
 ## API Endpoints Used by the UI
 
@@ -189,4 +203,3 @@ This page is both:
 - The app is designed for a small, local billing workflow rather than a multi-tenant SaaS setup.
 - Most business logic lives in the Django views and model helper methods.
 - The SQLite database bundled in the repo is empty in this checkout, so the first useful step is usually creating master records.
-

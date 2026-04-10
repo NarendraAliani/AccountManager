@@ -5,10 +5,11 @@
 {% endblock%}
 
 {% block title %}
-<div class="navbar-header"> <h2>&nbsp;Clients </h2></div>
-<div class="nav navbar-nav navbar-right col-md-3">
-	<a href="/clients/new"><button type="submit" class="btn btn-info btn-fill btn-wd">New client</button></a>
-</div>
+<h2>Clients</h2>
+{% endblock %}
+
+{% block page_actions %}
+<a href="/clients/new" class="btn btn-info btn-fill btn-sm">New Client</a>
 {% endblock %}
 
 {% block body%}
@@ -32,9 +33,21 @@
         	<td>{{client.name|title}}</td>
         	<td>{{client.gstin}}</td>
             <td>{{client.state}}</td>
-            <td>{{client.debit_balance}}</td>
-            <td>{{client.bill_set.count}}</td>
-            <td><a href="/clients/{{client.id}}"><i class="fa fa-chevron-circle-right fa-2x"></i></a></td>
+            <td>{{client.current_debit_balance}}</td>
+            <td>{{client.active_bill_count}}</td>
+            <td>
+                <div class="row-actions">
+                    <a href="/clients/{{client.id}}" title="Open client"><i class="fa fa-chevron-circle-right fa-2x"></i></a>
+                    {% if firm.show_client_delete_button %}
+                    <form method="post" action="/clients/{{client.id}}/delete" onsubmit="return confirm('Delete this client? This will also remove linked invoices and payments from the system. Continue?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link btn-xs" style="color:#d9534f;padding:0 0 0 8px;" title="Delete client">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </td>
         </tr>
     {% endfor %}
     </tbody>

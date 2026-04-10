@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+.report-card {
+	border-radius: 18px;
+	box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+	margin-bottom: 24px;
+}
+.stat {
+	border-radius: 16px;
+	color: #fff;
+	padding: 18px 20px;
+	min-height: 110px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.stat h3, .stat p {
+	margin: 0;
+	color: inherit;
+}
+.stat .value {
+	font-size: 34px;
+	font-weight: 700;
+	line-height: 1.1;
+}
+.blue { background: linear-gradient(135deg, #0ea5e9, #2563eb); }
+.green { background: linear-gradient(135deg, #10b981, #059669); }
+.amber { background: linear-gradient(135deg, #f59e0b, #ea580c); }
+.slate { background: linear-gradient(135deg, #475569, #0f172a); }
+.pink { background: linear-gradient(135deg, #ec4899, #db2777); }
+.filter-bar {
+	background: rgba(14,165,233,0.08);
+	border: 1px solid rgba(14,165,233,0.14);
+	border-radius: 18px;
+	padding: 18px;
+	margin-bottom: 20px;
+}
+</style>
+{% endblock %}
+
+{% block title %}
+<h2>Reports</h2>
+{% endblock %}
+
+{% block page_actions %}
+<a href="/reports/export/xlsx/" class="btn btn-info btn-fill btn-sm">Export Excel</a>
+<a href="/reports/export/csv/" class="btn btn-default btn-fill btn-sm">Export CSV</a>
+{% endblock %}
+
+{% block body %}
+<div class="filter-bar">
+	<div class="row">
+		<div class="col-md-12 form-group text-right" style="margin-bottom:0;">
+			<strong>{{ start_date }} to {{ end_date }}</strong>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-3">
+		<div class="stat blue report-card">
+			<p>Sales</p>
+			<div class="value">{{ sales_total }}</div>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="stat green report-card">
+			<p>Collections</p>
+			<div class="value">{{ collections_total }}</div>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="stat amber report-card">
+			<p>Receivables</p>
+			<div class="value">{{ total_receivables }}</div>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="stat slate report-card">
+			<p>Pending Invoices</p>
+			<div class="value">{{ pending_invoice_count }}</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="card report-card">
+			<div class="content table-responsive">
+				<h3 style="margin-top:0;">Monthly Sales and Collections</h3>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Month</th>
+							<th class="right">Sales</th>
+							<th class="right">Collections</th>
+							<th class="right">Net Movement</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for row in monthly_rows %}
+						<tr>
+							<td>{{ row.month|date:"M Y" }}</td>
+							<td class="right">{{ row.sales }}</td>
+							<td class="right">{{ row.collections }}</td>
+							<td class="right">{{ row.net_movement }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="card report-card">
+			<div class="content table-responsive">
+				<h3 style="margin-top:0;">GST Summary</h3>
+				<table class="table table-striped">
+					<tbody>
+						<tr><th>Sales</th><td class="text-right">{{ gst_summary.taxable_total }}</td></tr>
+						<tr><th>Base Amount</th><td class="text-right">{{ gst_summary.base_total }}</td></tr>
+						<tr><th>CGST</th><td class="text-right">{{ gst_summary.cgst_total }}</td></tr>
+						<tr><th>SGST</th><td class="text-right">{{ gst_summary.sgst_total }}</td></tr>
+						<tr><th>IGST</th><td class="text-right">{{ gst_summary.igst_total }}</td></tr>
+						<tr><th>Total Tax</th><td class="text-right">{{ gst_summary.total_tax }}</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="card report-card">
+			<div class="content table-responsive">
+				<h3 style="margin-top:0;">Outstanding Receivables</h3>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Client</th>
+							<th class="right">Opening</th>
+							<th class="right">Invoice</th>
+							<th class="right">Payment</th>
+							<th class="right">Closing</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for balance in receivables %}
+						<tr>
+							<td><a href="/clients/{{ balance.client_id }}">{{ balance.name }}</a></td>
+							<td class="right">{{ balance.opening_balance }}</td>
+							<td class="right">{{ balance.invoice_total }}</td>
+							<td class="right">{{ balance.payment_total }}</td>
+							<td class="right"><strong>{{ balance.closing_balance }}</strong></td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="card report-card">
+			<div class="content table-responsive">
+				<h3 style="margin-top:0;">Aging Summary</h3>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Bucket</th>
+							<th class="right">Count</th>
+							<th class="right">Amount</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for bucket in aging_buckets %}
+						<tr>
+							<td>{{ bucket.label }}</td>
+							<td class="right">{{ bucket.count }}</td>
+							<td class="right">{{ bucket.amount }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="card report-card">
+			<div class="content table-responsive">
+				<h3 style="margin-top:0;">Agent-wise Totals</h3>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Agent</th>
+							<th class="right">Invoices</th>
+							<th class="right">Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for row in agent_rows %}
+						<tr>
+							<td>{{ row.agent__name|default:"-" }}</td>
+							<td class="right">{{ row.invoice_count }}</td>
+							<td class="right">{{ row.total }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="card report-card">
+			<div class="content table-responsive">
+				<h3 style="margin-top:0;">Product-wise Totals</h3>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Product</th>
+							<th class="right">Qty</th>
+							<th class="right">Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for row in product_rows %}
+						<tr>
+							<td>{{ row.product__name|default:"-" }}</td>
+							<td class="right">{{ row.qty_total }}</td>
+							<td class="right">{{ row.total }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$("#sidebar .reports")[0].className += " active";
+</script>
+{% endblock %}

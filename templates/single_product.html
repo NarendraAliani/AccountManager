@@ -4,9 +4,7 @@
 <link href="/static/css/datatables.min.css" rel="stylesheet"/>
 {% endblock%}
 
-{% block title %}
-<div class="navbar-header"> <h2>Ledger of {{product.name}}</h2></div>
-{% endblock %}
+{% block title %}<h2>Ledger of {{ product.name }}</h2>{% endblock %}
 
 {% block body %}
 <div class="row">
@@ -27,7 +25,7 @@
         {% for item in product.item_set.all%}
             <tr class="clickable-row" data-href="/invoices/{{item.bill.id}}">
                 <td>{{item.bill.invoice_date}}</td>
-                <td>{{item.bill.invoice_number}}</td>
+                <td>{{item.bill.display_invoice_number}}</td>
                 <td>{{item.bill.client.name}}</td>
                 <td>{{item.qty}}</td>
                 <td>{{item.rate}}</td>

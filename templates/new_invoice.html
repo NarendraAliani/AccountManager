@@ -7,22 +7,16 @@
 </style>
 {% endblock%}
 
-{% block title %} <div class="navbar-header"> <h2>&nbsp;{{name}} </h2></div> {% endblock %}
+{% block title %}<h2>{{ name }}</h2>{% endblock %}
 
 {% block body %}
 <form method="POST" > {%csrf_token %}
 <div class="row">
 	<div class="col-md-12">
 	<section>
-		{%if add%}
-		<div class="onoffswitch" tabindex="-1">
-			{{form.is_taxable}}	
-			<label class="onoffswitch-label" for="myonoffswitch">
-				<span class="onoffswitch-inner"></span>
-				<span class="onoffswitch-switch"></span>
-			</label>
+		<div class="alert alert-info" style="margin-bottom:14px;">
+			This system uses invoices only.
 		</div>
-		{%endif%}
 	</section>
 	</div>
 </div>
@@ -34,6 +28,11 @@
 		<div class="header">
 			<div class="form-group">
 				<label>Client</label>
+				{% if add %}
+				<div style="display:flex;justify-content:flex-end;margin-top:-6px;margin-bottom:6px;">
+					<a href="/clients/new?next=/invoices/new" class="btn btn-xs btn-default btn-fill inline-action-link">Add New Client</a>
+				</div>
+				{% endif %}
 				{{form.client}}
 			</div>
 		</div>
@@ -85,8 +84,20 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12 form-group">
+					<label>Invoice Date</label>
+					{{form.invoice_date}}
+					{% if form.invoice_date.help_text %}
+						<small class="text-muted">{{ form.invoice_date.help_text }}</small>
+					{% endif %}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 form-group">
 					<label>Delivery Date</label>
 					{{form.date_of_supply}}
+					{% if form.date_of_supply.help_text %}
+						<small class="text-muted">{{ form.date_of_supply.help_text }}</small>
+					{% endif %}
 				</div>
 			</div>
 			<div class="row">
@@ -119,14 +130,6 @@
 	</div>
 	</section>
 </div>
-
-<div class="row">
-	<div class="col-md-12 content form-group">
-		<label>Description</label>
-		{{form.description}}
-	</div>
-</div>
-
 
 <div class="row">
 	<div class="col-md-12">
@@ -211,23 +214,36 @@ var intVal = function ( i ) {
 $(document).ready( function(){
 	$("#sidebar .invoices")[0].className += " active";
 
+	var preselectedClient = "{{ selected_client|default:'' }}";
+
 	// SELECTIZE SETUP
 	var client_options = $('#id_client').selectize({create: false , closeAfterSelect:true, placeholder : "Select A Client", selectOnTab : true , 
 		onItemAdd : function(x) {
-			$.ajax({ 
-				url:'/api/client/' + x,
-				type:'get',
-				success : function(data) {
-					$("#name").val(data.name);
-					$("#address").val(data.address);
-					$("#mobile").val(data.mobile);
-					$("#state").val(data.state);
-					$("#gstin").val(data.gstin);
-				},
-				failure : function(data) {alert("Nope");},
-			})
+			fillClientDetails(x);
 		},
 	});
+	var client_selectize = client_options[0].selectize;
+
+	function fillClientDetails(clientId) {
+		if (!clientId) { return; }
+		$.ajax({ 
+			url:'/api/client/' + clientId,
+			type:'get',
+			success : function(data) {
+				$("#name").val(data.name);
+				$("#address").val(data.address);
+				$("#mobile").val(data.mobile);
+				$("#state").val(data.state);
+				$("#gstin").val(data.gstin);
+			},
+			failure : function(data) {alert("Nope");},
+		});
+	}
+
+	if (preselectedClient) {
+		client_selectize.setValue(preselectedClient, true);
+		fillClientDetails(preselectedClient);
+	}
 	agent_options=$('#id_agent').selectize({create:true, closeAfterSelect:true, placeholder:"Select an Agent", selectOnTab:true});
 	
 	/// FORMSET SETUP

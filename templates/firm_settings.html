@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}
+<h2>Settings</h2>
+{% endblock %}
+
+{% block body %}
+<form method="POST" enctype="multipart/form-data">
+	{% csrf_token %}
+	<div class="row">
+		<div class="col-md-10">
+			<div class="card">
+				<div class="content">
+					<div class="row">
+						<div class="col-md-12 form-group">
+							<label>Firm Name</label>
+							{{ form.firm_name }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 form-group">
+							<label>Address Line 1</label>
+							{{ form.address_line1 }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 form-group">
+							<label>Address Line 2</label>
+							{{ form.address_line2 }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4 form-group">
+							<label>City</label>
+							{{ form.city }}
+						</div>
+						<div class="col-md-4 form-group">
+							<label>State</label>
+							{{ form.state }}
+						</div>
+						<div class="col-md-4 form-group">
+							<label>Pincode</label>
+							{{ form.pincode }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 form-group">
+							<label>GSTIN</label>
+							{{ form.gstin }}
+						</div>
+						<div class="col-md-6 form-group">
+							<label>Contact Number</label>
+							{{ form.contact_number }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 form-group">
+							<label>Alternate Contact Number</label>
+							{{ form.alternate_contact_number }}
+						</div>
+						<div class="col-md-6 form-group">
+							<label>Third Contact Number</label>
+							{{ form.third_contact_number }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 form-group">
+							<label>Email</label>
+							{{ form.email }}
+						</div>
+						<div class="col-md-6 form-group">
+							<label>Logo</label>
+							<div style="margin-bottom:10px;">
+								<img src="{{ firm.logo_url }}" alt="{{ firm.firm_name }}" style="max-height:90px;max-width:100%;">
+							</div>
+							{{ form.logo }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4 form-group">
+							<label>CGST %</label>
+							{{ form.cgst_rate }}
+						</div>
+						<div class="col-md-4 form-group">
+							<label>SGST %</label>
+							{{ form.sgst_rate }}
+						</div>
+						<div class="col-md-4 form-group">
+							<label>IGST %</label>
+							{{ form.igst_rate }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 form-group">
+							<label>Invoice Template</label>
+							{{ form.invoice_template }}
+							<div class="text-muted" style="margin-top:6px;">Choose which invoice layout will be used for invoice display and printing.</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 form-group">
+							<label style="display:block;">Invoice Delete Button</label>
+							<label style="display:flex;align-items:center;gap:10px;font-weight:500;">
+								{{ form.show_invoice_delete_button }}
+								<span>Show delete button in the invoices list</span>
+							</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 form-group">
+							<label style="display:block;">Payment Delete Button</label>
+							<label style="display:flex;align-items:center;gap:10px;font-weight:500;">
+								{{ form.show_payment_delete_button }}
+								<span>Show delete button in the payments list and payment detail screen</span>
+							</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 form-group">
+							<label style="display:block;">Client Delete Button</label>
+							<label style="display:flex;align-items:center;gap:10px;font-weight:500;">
+								{{ form.show_client_delete_button }}
+								<span>Show delete button in the clients list</span>
+							</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 form-group">
+							<label style="display:block;">Size Delete Button</label>
+							<label style="display:flex;align-items:center;gap:10px;font-weight:500;">
+								{{ form.show_size_delete_button }}
+								<span>Show delete button in the sizes list</span>
+							</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 form-group">
+							<label style="display:block;">Product Delete Button</label>
+							<label style="display:flex;align-items:center;gap:10px;font-weight:500;">
+								{{ form.show_product_delete_button }}
+								<span>Show delete button in the products list</span>
+							</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 form-group">
+							<label style="display:block;">Agent Delete Button</label>
+							<label style="display:flex;align-items:center;gap:10px;font-weight:500;">
+								{{ form.show_agent_delete_button }}
+								<span>Show delete button in the agents list</span>
+							</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 form-group">
+							<label>Invoice Terms</label>
+							{{ form.invoice_terms }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 form-group">
+							<label>Invoice Footer</label>
+							{{ form.invoice_footer }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 form-group">
+							<label>Bank Name</label>
+							{{ form.bank_name }}
+						</div>
+						<div class="col-md-6 form-group">
+							<label>Account Name</label>
+							{{ form.account_name }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4 form-group">
+							<label>Account Number</label>
+							{{ form.account_number }}
+						</div>
+						<div class="col-md-4 form-group">
+							<label>IFSC Code</label>
+							{{ form.ifsc_code }}
+						</div>
+						<div class="col-md-4 form-group">
+							<label>RTGS Code</label>
+							{{ form.rtgs_code }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 form-group">
+							<label>UPI ID</label>
+							{{ form.upi_id }}
+						</div>
+					</div>
+					<div class="text-center">
+						<button type="submit" class="btn btn-info btn-fill btn-wd">Save Settings</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function(){
+	$("#sidebar .firm-settings")[0].className += " active";
+});
+</script>
+{% endblock %}

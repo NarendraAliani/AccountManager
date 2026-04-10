@@ -2,13 +2,29 @@
 
 {% block head%}
 <link href="/static/css/datatables.min.css" rel="stylesheet"/>
+<style>
+.row-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+.row-actions form {
+    margin: 0;
+}
+.row-actions .btn-link {
+    padding: 0;
+    line-height: 1;
+}
+</style>
 {% endblock%}
 
 {% block title %}
-<div class="navbar-header"> <h2>&nbsp;Payments </h2></div>
-<div class="nav navbar-nav navbar-right col-md-3">
-	<a href="/payments/new"><button type="submit" class="btn btn-info btn-fill btn-wd">New payment</button></a>
-</div>
+<h2>Payments</h2>
+{% endblock %}
+
+{% block page_actions %}
+<a href="/payments/new" class="btn btn-info btn-fill btn-sm">New Payment</a>
 {% endblock %}
 
 {% block body%}
@@ -33,11 +49,23 @@
     {% for payment in payments%}
         <tr class="{%if payment.is_cleared%}text-info{%endif%}">
             <td>{%if payment.is_cleared%}clear{%else%}pending{%endif%}</td>
-        	<td>{{payment.payment_date}}</td>
+        	<td>{{payment.printable_date}}</td>
             <td><a href="/clients/{{payment.client.id}}">{{payment.client.name|title}}</a></td>
         	<td>{{payment.paid_amount}}</td>
         	<td>{{payment.method_of_payment}}</td>
-            <td><a href="/payments/{{payment.id}}"><i class="fa fa-chevron-circle-right fa-2x"></i></a></td>
+            <td>
+                <div class="row-actions">
+                <a href="/payments/{{payment.id}}" title="Open payment"><i class="fa fa-chevron-circle-right fa-2x"></i></a>
+                {% if firm.show_payment_delete_button %}
+                <form method="post" action="/payments/{{payment.id}}/delete" onsubmit="return confirm('Delete this payment? This will remove it from active lists and roll back the client balance.');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link btn-xs" style="color:#d9534f;padding:0 0 0 8px;" title="Delete payment">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </form>
+                {% endif %}
+                </div>
+            </td>
             <td>{%if payment.is_cleared%}clear{%endif%}</td>
             <td>{{payment.client.gstin}}</td>
             <td>{{payment.payment_description}}</td>

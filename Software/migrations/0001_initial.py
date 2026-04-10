@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('description', models.CharField(blank=True, max_length=500, null=True)),
                 ('is_cleared', models.BooleanField(default=False)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('agent', models.ForeignKey(to='Software.Agent', null=True, blank=True)),
+                ('agent', models.ForeignKey(to='Software.Agent', null=True, blank=True, on_delete=models.SET_NULL)),
             ],
         ),
         migrations.CreateModel(
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
                 ('rate', models.DecimalField(default=0.0, decimal_places=2, max_digits=10)),
                 ('qty', models.DecimalField(default=0, decimal_places=0, max_digits=10)),
-                ('bill', models.ForeignKey(to='Software.Bill')),
+                ('bill', models.ForeignKey(to='Software.Bill', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -70,7 +70,7 @@ class Migration(migrations.Migration):
                 ('method_of_payment', models.CharField(max_length=100)),
                 ('description', models.CharField(blank=True, max_length=200, null=True)),
                 ('is_cleared', models.BooleanField(default=False)),
-                ('client', models.ForeignKey(to='Software.Client')),
+                ('client', models.ForeignKey(to='Software.Client', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -91,16 +91,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='item',
             name='product',
-            field=models.ForeignKey(to='Software.Product'),
+            field=models.ForeignKey(to='Software.Product', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='item',
             name='size',
-            field=models.ForeignKey(to='Software.Size'),
+            field=models.ForeignKey(to='Software.Size', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='bill',
             name='client',
-            field=models.ForeignKey(to='Software.Client'),
+            field=models.ForeignKey(to='Software.Client', on_delete=models.CASCADE),
         ),
     ]
